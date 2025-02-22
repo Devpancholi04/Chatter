@@ -133,3 +133,28 @@ MEDIA_URL = '/media/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Email backend code
+
+EMAIL_BACKEND = 'django.core.email.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = "atm.simulatorby.dev@gmail.com"
+EMAIL_HOST_PASSWORD = "fdxx gtmn kxhb lyzm"
+
+#redis setup
+
+CACHE_TTL = 30 * 24 * 60 * 60
+
+CACHES = {
+    "default" : {
+        "BACKEND" : "django_redis.cache.RedisCache",
+        "LOCATION" : "redis://127.0.0.1:6379/2",
+        "OPTIONS" : {
+            "CLIENT_CLASS" : "django_redis.client.DefaultClient",
+        } ,
+        "KEY_PREFIX" : "chatter",
+        "TIMEOUT" : CACHE_TTL,
+    }
+}
+

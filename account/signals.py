@@ -13,7 +13,7 @@ def create_user_group(sender, **kwargs):
     
     if not Group.objects.filter(name = "EMPLOYEE").exists():
         employee_group = Group.objects.create(name = "EMPLOYEE")
-        employee_group.permissions.set(Permission.objects.filter(ContentType__app_label = "account"))
+        employee_group.permissions.set(Permission.objects.filter(content_type__app_label = "account"))
     
     if not Group.objects.filter(name = "USER").exists():
         Group.objects.create(name = "USER")

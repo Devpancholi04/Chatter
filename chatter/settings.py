@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure--l-^w6bs*!)pakj5xf#^2uh_&71zmx6b=+=c5cx@3fr)ko0i#_
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1','0.0.0.0','chatter.com']
 
 AUTH_USER_MODEL = 'account.CustomUser'
 
@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     
-    'account'
+    'account',
+    'daphne',
 ]
 
 MIDDLEWARE = [
@@ -73,7 +74,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'chatter.wsgi.application'
+ASGI_APPLICATION = 'chatter.asgi.application'
 
 
 # Database

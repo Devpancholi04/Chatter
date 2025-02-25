@@ -105,8 +105,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     
 
     # Tokens
-    email_token = models.CharField(max_length=100, null=True, blank=True)
-    forget_token = models.CharField(max_length=100, null=True, blank=True)
+    email_token = models.CharField(max_length=100, null=True, blank=True, editable=False)
+    forget_token = models.CharField(max_length=100, null=True, blank=True, editable=False)
 
 
     #important Dates

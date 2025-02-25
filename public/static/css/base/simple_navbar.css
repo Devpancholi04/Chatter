@@ -1,0 +1,43 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.navbar{
+    background-color: #d9d9e5;
+}
+
+.navbar .container img{
+    width: 200px;
+    height: auto;
+}
+
+.navbar .side-text .text-muted{
+    font-size: large;
+    font-weight: 600;
+}
+
+.navbar .side-text .toogle-btn .btn{
+    color: black;
+    border-radius: 50%;
+    border: none;
+}
+
+
+.navbar .side-text .toogle-btn .fa-solid{
+    font-size: x-large;
+}
+
+.dark-mode .navbar .container img{
+    background-color: #d9d9e5; 
+    opacity: 0.9;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+}
+
+
+.dark-mode .navbar .side-text .text-muted{
+    color: #d9d9e5 !important;
+}
+

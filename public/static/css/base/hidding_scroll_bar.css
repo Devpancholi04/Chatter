@@ -1,0 +1,15 @@
+/* hidding scroll bar */
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+html {
+    scrollbar-width: none; /* Firefox */
+}
+
+body {
+    -ms-overflow-style: none; /* IE and Edge */
+}
+
+/* hidding scroll bar ends */

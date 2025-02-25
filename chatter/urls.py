@@ -19,10 +19,12 @@ from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from django.views.generic.base import RedirectView # used for favicon purpose
 
 urlpatterns = [
+    path("favicon.ico", RedirectView.as_view(url = ('/media/images/favicon/favicon.ico'))), # added favicon
     path('admin/', admin.site.urls),
-    path('accounts/', include('account.url')),
+    path('accounts/', include('account.urls')),
 ]
 
 
@@ -30,3 +32,9 @@ if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
 
 urlpatterns += staticfiles_urlpatterns()
+
+
+# used for admin page desciption updation purpose
+admin.site.site_header = "Chatter Adminstration" 
+admin.site.site_title = "Chatter Admin"
+admin.site.index_title = "Welcome to Chatter Admin Panel"

@@ -1,1 +1,95 @@
 {% extends 'base/simple_navbar.html' %}
+
+{% block title %} Chatter.com | Login {% endblock title %}
+
+{% block external_css %} 
+    <link rel="stylesheet" href="/media/css/accounts/style.css">
+{% endblock external_css %}
+
+{% block internal_css %}
+<style>
+    .form-group p a{
+        text-decoration: none;
+        color: gray;
+    }
+
+    .dark-mode .form-group p a{
+        color: #d9d9e5
+    }
+
+    .dark-mode .form-group p a:hover{
+        text-decoration: underline;
+    }
+
+    .form-group p a:hover{
+        color: black;
+    }
+
+    .form-group .sub-btn{
+        width: 80%;
+        border-radius: 36px;
+    }
+</style>
+{% endblock internal_css %}
+
+{% block simple_navbar_side %} 
+    <p class="text-muted text-end mx-3">Don't have an account? <a href="/registration/registration.html"> Sign Up </a> </p>
+
+    <div class="toogle-btn">
+        <button id="theme-btn" class="btn btn-outline-light">
+            <i class="fa-solid fa-moon" id="theme-icon"></i>
+        </button>
+    </div>
+{% endblock simple_navbar_side %}
+
+
+{% block body %}
+
+    <section class="page">
+
+        <div class="background">
+
+            <div class="card login-card p-3 shadow-lg">
+                <div class="brand-img text-center">
+                    <img src="/media/images/logo/main-rbg.png" alt="brand-desc" >
+                </div>
+
+                <hr>
+
+                <h4 class="text-center">Welcome Back!</h4>
+                <p class="text-center">Please enter your Details</p>
+
+
+                <form action="" method="post"> {% csrf_token %}
+                    <div class="form-group">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control mb-2" placeholder="Email" id="email" name="email">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control mb-2" placeholder="Password" id="password" name="password" autocomplete="off">
+                    </div>
+
+                    <div class="form-group">
+                        <p class="text-end"> <a href="#" >Forget Password?</a></p>
+                    </div>
+
+                    <div class="form-group text-center">
+                        <button type="submit" class="btn btn-primary sub-btn w-75" id="login-page-btn">Sign In</button>
+                    </div>
+                </form>
+
+                <hr>
+
+                <div class="sign-in text-center mt-1">
+                    <p class="text-muted">Don't have an account? <a href="#"> Sign Up </a> </p>
+                </div>
+
+            </div>
+        </div>
+
+    </section>
+
+
+{% endblock body %}

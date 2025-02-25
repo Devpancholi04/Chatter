@@ -1,21 +1,20 @@
 .page .background{
-    background-image: url('/media/images/accounts/background/chat_login.png');
+    background-image: url('/images/background/chat_login.png');
     height: 90vh;
     background-size: cover;
     background-position: center;
     overflow-y: auto;
 }
 
-.dark-mode .page .background{
-    background-image: url('/media/images/accounts/background/chat_login-rebg.png'); 
-}
 
 .card{
     width: 40%;
     position: relative;
     right: -800px;
     top: 10px;
+    /* margin-top: 0px; */
 }
+
 
 .page .card img{
     width: 250px;
@@ -66,6 +65,7 @@
     -webkit-backdrop-filter: blur(10px);
     border: 1px solid rgba(255,255,255,0.3);
     color: black;
+    
 }
 
 #page2{
@@ -94,12 +94,20 @@
     color: #d9d9e5 !important;
 }
 
+
+/* Navbar */
+
+.dark-mode .navbar {
+    background-color: #333333;
+}
+
+/* Card Styling */
+
 .dark-mode .card {
     background: rgba(0, 0, 0, 0.7);
     border: 1px solid rgba(255, 255, 255, 0.3);
     color: white;
 }
-
 
 /* Form Inputs */
 .form-group input, .form-group .form-select {
@@ -114,38 +122,11 @@
     color: white;
 }
 
-
-
-@media (min-width:300px) and (max-width:600px) {
-
-    .page .background {
-        background-image: url('/media/images/accounts/background/chatter_748px.jpg');
-    }
-
-    .page .card {
-        width: 95%; 
-        right: -10px;
-        top: 3px;
-    }
-
-    .page .card img {
-        width: 180px; 
-    }
-
-    .side-text .text-muted{
-        display: none;
-    }
-
-    .form-group .sign-in{
-        margin-top: -10px !important;
-    }
-
-}
-
+/* Responsive Design */
 
 @media (min-width: 601px) and (max-width:800px) {
     .page .background {
-        background-image: url('/media/images/accounts/background/chatter_748px.jpg');
+        background-image: url('/images/chatter_748px.jpg');
     }
 
     .page .card {
@@ -163,10 +144,9 @@
     }
 }
 
-
 @media (min-width: 801px) and (max-width:1024px) {
     .page .background {
-        background-image: url('/media/images/accounts/background/chatter_748px.jpg');
+        background-image: url('/images/chatter_748px.jpg');
         height: 91vh;
     }
 
@@ -191,3 +171,30 @@
 @media (min-width : 1025px) and (max-width:1350){
     
 }
+
+@media (min-width:300px) and (max-width:600px) {
+
+    .page .background {
+        background-image: url('/images/chatter_748px.jpg');
+    }
+
+    .page .card {
+        width: 95%; 
+        right: -10px;
+        top: 3px;
+    }
+
+    .page .card img {
+        width: 180px; 
+    }
+
+    .side-text .text-muted{
+        display: none;
+    }
+
+    .form-group .sign-in{
+        margin-top: -10px !important;
+    }
+
+}
+

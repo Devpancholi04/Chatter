@@ -29,6 +29,8 @@
     font-size: x-large;
 }
 
+
+/* dark mode */
 .dark-mode .navbar .container img{
     background-color: #d9d9e5; 
     opacity: 0.9;
@@ -41,3 +43,6 @@
     color: #d9d9e5 !important;
 }
 
+.dark-mode .navbar {
+    background-color: #333333;
+}

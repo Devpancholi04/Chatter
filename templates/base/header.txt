@@ -1,0 +1,23 @@
+{% block title %}       {% endblock title %}
+
+
+{% block external_css %}        {% endblock external_css %}
+
+
+{% block internal_css %}    {% endblock internal_css %}
+
+
+{% block alert %}    {% endblock alert %}
+
+
+{% block simple_navbar_side %}      {% endblock simple_navbar_side %}
+
+
+{% block body %}
+
+{% endblock body %}
+
+
+{% block external_js %} {% endblock external_js %}
+
+{% block internal_js %} {% endblock internal_js %}

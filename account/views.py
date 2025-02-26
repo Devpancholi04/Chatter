@@ -37,7 +37,7 @@ def login_page(request):
                     user.email_token = email_token
                     user.save()
 
-                    account_activation_email.delay(user.email, user.first_name, email_token)
+                    account_activation_email.delay(email = user.email, name=user.first_name, email_token = email_token)
                     messages.warning(request, "Email Not Verified! Link Send on registered Email..")
                     return HttpResponseRedirect(request.path_info)
                 
@@ -63,7 +63,7 @@ Best Regards,
 Chatter Team
 '''               
                     send_email.delay()(subject=subject, message=message, email=user.email)
-                    return redirect() # otp verification link will come here.
+                    return HttpResponse(request, "<h1> Login Success </h1>") # otp verification link will come here.
                 
                 # sending login email to the user if not activated two step verification mail
 
@@ -81,7 +81,7 @@ Best Regards,
 Chatter Team
 '''
                 send_email.delay(subject=subject, message=message, email=user.email)
-                return redirect() # add the login of the home page after login to be redirect user
+                return HttpResponse(request, "<h1> Login Success </h1>") # add the login of the home page after login to be redirect user
 
                      
 

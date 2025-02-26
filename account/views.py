@@ -37,7 +37,7 @@ def login_page(request):
                     user.email_token = email_token
                     user.save()
 
-                    account_activation_email.delay(email = user.email, name=user.first_name, email_token = email_token)
+                    account_activation_email.delay(email = user.email, name=user.first_name, email_token = email)
                     messages.warning(request, "Email Not Verified! Link Send on registered Email..")
                     return HttpResponseRedirect(request.path_info)
                 

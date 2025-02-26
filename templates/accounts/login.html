@@ -59,6 +59,7 @@
                 <h4 class="text-center">Welcome Back!</h4>
                 <p class="text-center">Please enter your Details</p>
 
+                {% include 'base/alert.html' %}
 
                 <form action="" method="post"> {% csrf_token %}
                     <div class="form-group">

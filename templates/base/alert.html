@@ -1,0 +1,13 @@
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-{% if message.tags %}{{ message.tags }}{% endif %} alert-dismissible fade show top-right-alert"
+    role="alert" id="timedAlert">
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <div class="progress mt-2" style="height: 2px;">
+        <div class="progress-bar bg-success" role="progressbar" style="width: 100%; height: 3px;" id="progressBar">
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endif %}

@@ -16,7 +16,7 @@ Don't replay to this mail.
 This is auto generated mail.
 
 Best Regards,
-Chatter Teams
+Chatter Team
 '''
     
     send_mail(subject, message, email_from, [email])
@@ -41,7 +41,7 @@ Don't replay to this mail.
 This is auto generated mail.
 
 Best Regards,
-Chatter Teams
+Chatter Team
 '''
     
     send_mail(subject, message, email_from, [email])

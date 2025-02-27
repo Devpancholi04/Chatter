@@ -1,0 +1,69 @@
+{% extends 'base/simple_navbar.html' %}
+
+{% block title %} Chatter.com | Login {% endblock title %}
+
+{% block external_css %} 
+    <link rel="stylesheet" href="/media/css/accounts/style.css">
+{% endblock external_css %}
+
+{% block simple_navbar_side %} 
+    <div class="toogle-btn">
+        <button id="theme-btn" class="btn btn-outline-light">
+            <i class="fa-solid fa-moon" id="theme-icon"></i>
+        </button>
+    </div>
+{% endblock simple_navbar_side %}
+
+
+{% block body %}
+
+    <section class="page">
+
+        <div class="background">
+            <div class="card forget-card p-3 shadow-lg">
+                <div class="brand-img text-center">
+                    <img src="/media/images/logo/main-rbg.png" alt="brand-desc">
+                </div>
+
+            <hr>
+
+            <h4 class="text-center">Two Step Verification</h4>
+
+            <form action="" method="post" enctype="multipart/form-data" autocomplete="off">
+
+                <div class="mb-3 form-group">
+                    <label for="otp" class="form-label">One Time Password *</label>
+                    <input type="text" id="otp" placeholder="Enter your OTP here." class="form-control" required name="otp" pattern="[0-9]{6}" title="OTP must be of 6 Digits">
+                </div>
+
+                <div class="form-group text-center">
+                    <button type="submit" class="btn btn-outline-success w-50" id="submitButton">
+                        <span class="spinner-border spinner-border-sm" aria-hidden="true" id="spinner"></span>
+                        <span role="status">Verify OTP</span>
+                    </button>
+                </div>
+
+                <div class="form-group text-center">
+                    <br>
+                    <p>If you did not receive One Time Password via Email, you can</p>
+                    <a href="" type="button" class="btn btn-outline-primary" id="resendbutton">
+                        <span class="spinner-border spinner-border-sm" aria-hidden="true" id="spinner"></span>
+                        <span role="status">Click Here to resend OTP</span>
+                    </a>
+                </div>
+
+            </form>
+
+            <hr>
+
+            <div class="sign-in text-center mt-3">
+                <p class="text-muted">Already Have an Account? <a href="{% url 'login' %}"> Sign In </a> </p>
+            </div>
+
+        </div>
+    </div>
+
+</section>
+
+
+{% endblock body %}

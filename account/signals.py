@@ -1,8 +1,8 @@
-from django.db.models.signals import post_migrate
+from django.db.models.signals import post_migrate, post_save, post_delete
 from django.dispatch import receiver
 from django.contrib.auth.models import Group, Permission
-from django.contrib.contenttypes.models import ContentType
-
+from .models import CustomUser
+from django.core.cache import cache
 
 @receiver(post_migrate)
 def create_user_group(sender, **kwargs):
@@ -17,3 +17,9 @@ def create_user_group(sender, **kwargs):
     
     if not Group.objects.filter(name = "USER").exists():
         Group.objects.create(name = "USER")
+
+
+@receiver(post_save, sender=CustomUser)
+@receiver(post_delete, sender=CustomUser)
+def delete_all_user_cache_data(sender, instance, **kwargs):
+    cache.delete("ALL-USER-DATA-CACHE")

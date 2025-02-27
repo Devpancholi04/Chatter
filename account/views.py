@@ -91,3 +91,11 @@ Chatter Team
         
 
     return render(request, 'accounts/login.html')
+
+
+
+def registration_page(request):
+
+
+
+    return render(request, 'accounts/register.html')

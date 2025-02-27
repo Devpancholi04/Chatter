@@ -1,0 +1,149 @@
+{% extends 'base/simple_navbar.html' %}
+
+{% block title %} Chatter.com | Register {% endblock title %}
+
+{% block external_css %} 
+    <link rel="stylesheet" href="/media/css/accounts/style.css">
+{% endblock external_css %}
+
+{% block simple_navbar_side %}
+    <p class="text-muted text-end mx-3">Already Have an Account? <a href="{% url 'login' %}"> Sign In </a> </p>
+
+    <div class="toogle-btn">
+        <button id="theme-btn" class="btn btn-outline-light">
+            <i class="fa-solid fa-moon" id="theme-icon"></i>
+        </button>
+    </div>
+{% endblock simple_navbar_side %}
+
+{% block body %}
+    <section class="page">
+
+        <div class="background">
+
+            <div class="card registration-card p-3 shadow-lg">
+
+                <div class="brand-img text-center">
+                    <img src="/media/images/logo/main-rbg.png" alt="brand-desc" >
+                </div>
+
+                <hr>
+
+                <h4 class="text-center">Create a New Account</h4>
+                <p class="text-center">Please enter your Details</p>
+
+                {% include 'base/alert.html' %}
+
+                <form action="#" method="post"> {% csrf_token %}
+                    <div id="page1">
+                    
+                        
+                        <!-- username field-->
+                        <div class="user-name form-group">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" id="username" name="username" class="form-control" placeholder="Create username..." required>
+                        </div>
+                        <span id="usernameError" class="error-message">Invalid Username ..</span>
+
+                        <!-- First Name fields -->
+                        <div class="f-name form-group">
+                            <label for="fname" class="form-label">First Name</label>
+                            <input type="text" id="fname" name="fname" class="form-control" placeholder="Enter Your First Name..." required>
+                        </div>
+                        <span id="fnameError" class="error-message">Invalid First Name ..</span>
+
+                        <!-- Last Name fields -->
+                        <div class="l-name form-group">
+                            <label for="lname" class="form-label">Last Name</label>
+                            <input type="text" id="lname" name="lname" class="form-control" placeholder="Enter Your Last Name..." required>
+                        </div>
+                        <span id="lnameError" class="error-message">Invalid Last Name ..</span>
+
+                        <!-- DOB Fields -->
+                        <div class="dob form-group">
+                            <label for="dob" class="form-label">Date of Birth</label>
+                            <input type="date" id="dob" name="dob" class="form-control" placeholder="DOB" required>
+                        </div>
+                        <span id="dobError" class="error-message">Select a Valid Date..</span>
+                        
+                        <!-- Gender Fields -->
+                        <div class="gender form-group mb-4">
+                            <label for="gender" class="form-label">Gender</label>
+                            <select name="gender" id="gender" class="form-select">
+                                <option value="">Select Gender</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <span id="genderError" class="error-message">Select a Valid gender..</span>
+
+                        <!-- button -->
+                        <div class="more-field d-flex align-items-center justify-content-center">
+                            <button class="btn btn-outline-primary w-75 mx-1" id="nextButton" disabled>Next</button>
+                        </div>
+
+                    </div>
+
+
+                    <div id="page2">
+                        <!-- email field -->
+                        <div class="mail form-group">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" id="email" name="email" class="form-control" placeholder="Enter Your Email ID...." required>
+                        </div>
+                        <span id="emailError" class="error-message">Invalid Email ..</span>
+                    
+
+                        <!-- Mobile field -->
+                        <div class="mobile form-group">
+                        <label for="mobile" class="form-label">Mobile Number</label>
+                            <input type="tel" id="mobile" name="mobile" class="form-control" placeholder="Enter Your Mobile Number...." required>
+                            </div>
+                        <span id="mobileError" class="error-message">Invalid Mobile Number ..</span>
+
+                        <!-- password field -->
+                        <div class="pass form-group">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" id="password" name="password" class="form-control" placeholder="Create password..." required>
+                        </div>
+                        <span id="passwordError" class="error-message">
+                            Password must be at least 8 characters, include an uppercase, a lowercase, a number, and a special character
+                        </span>
+
+                        <!-- confirm password field -->
+                        <div class="form-group">
+                            <label for="re-password" class="form-label">Confirm Password</label>
+                            <input type="password" id="re-password" name="re-password" class="form-control" placeholder="Confirm Password..." required>
+                        </div>
+                        <span id="repasswordError" class="error-message">Passwords do not match</span>
+
+                        <div class="d-flex align-items-center justify-content-center mb-4">
+                            <input type="checkbox" id="agree-T&C" name="agree-T&C" required checked>
+                            <label for="agree-T&C">&nbsp;I have read all <a href="" target="_blank" class="text-muted"> Terms & condition </a>and agree to procced.</label>
+                        </div>
+
+                        <div class="prev-field d-flex align-items-center justify-content-center">
+                            <button onclick="prevStep()" class="btn btn-outline-danger w-50 mx-1">Back!</button>
+                            <button class="btn btn-outline-success w-50 mx-1" id="submitButton" disabled>Submit</button>
+                        </div>
+                    </div>
+                    
+
+                </form>
+
+                <hr>
+
+                <div class="sign-in text-center mt-3">
+                    <p class="text-muted">Already Have an Account? <a href="{% url 'login' %}"> Sign In </a> </p>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+{% endblock body %}
+
+{% block external_js %}
+    <script src="/media/js/accounts/register.js"></script>
+{% endblock external_js %}

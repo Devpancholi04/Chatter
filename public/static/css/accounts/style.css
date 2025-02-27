@@ -189,5 +189,7 @@
 }
 
 @media (min-width : 1025px) and (max-width:1350){
-    
+    .page .card{
+        right: -650px;
+    }
 }

@@ -47,10 +47,9 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     ]
 
     GENDER_CHOICES = [
-        ("M",'M'),
-        ("F", 'F'),
-        ("T",'T'),
-        ("NOT PREFER TO SAY", "Not Prefer to Say"),
+        ("MALE",'MALE'),
+        ("FEMALE", 'FEMALE'),
+        ("OTHER",'OTHER'),
     ]
 
     ROLES_CHOICES = [

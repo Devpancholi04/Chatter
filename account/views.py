@@ -10,6 +10,13 @@ from base.otp import gen_otp
 from datetime import datetime
 from django.contrib.auth.models import User, Group
 
+# importing redis cache functionality
+from django.core.cache import cache
+from django.core.cache.backends.base import DEFAULT_TIMEOUT
+from django.conf import settings
+
+
+CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
 # Create your views here.
 
 def login_page(request):
@@ -95,7 +102,91 @@ Chatter Team
 
 
 def registration_page(request):
+    
+    # getting the data from cache
+    all_user_data_cache_key = "ALL-USER-DATA-CACHE"
+    get_all_user_data = cache.get(all_user_data_cache_key)
+
+    # if data is not in the cache setting the data in the cache
+    if not get_all_user_data:
+        get_all_user_data = CustomUser.objects.all()
+        cache.set(all_user_data_cache_key, list(get_all_user_data), timeout=CACHE_TTL)
+
+    if request.method == "POST":
+        username = request.POST.get('username')
+        fname = request.POST.get('fname')
+        lname = request.POST.get('lname')
+        dob = request.POST.get('dob')
+        gender = request.POST.get('gender')
+
+        email = request.POST.get('email')
+        mobile = request.POST.get('mobile')
+        password = request.POST.get('password')
+        repassword = request.POST.get('re-password')
 
 
+        # check if user name already used or not
+        if username in [user.username for user in get_all_user_data ]:
+            messages.warning(request, "username already taken!")
+            return HttpResponseRedirect(request.path_info) 
+        
+        # check if email is already used or not
+        if email in [user.email for user in get_all_user_data]:
+            messages.warning(request, "Email already taken!")
+            return HttpResponseRedirect(request.path_info)
+        
+        # check if mobile is already used or not
+        if mobile in [user.mobile_number for user in get_all_user_data ]:
+            messages.warning(request, "Mobile Number is already taken!")
+            return HttpResponseRedirect(request.path_info)
 
+        # check password match or not
+        if password != repassword:
+            messages.warning(request, "Password Doesn't match!")
+            return HttpResponseRedirect(request.path_info)
+        
+
+        # creating account and sending account active email
+
+        email_token = str(uuid.uuid4())
+        user_obj = CustomUser.objects.create(
+            username = username,
+            first_name = fname,
+            last_name = lname,
+            email = email,
+            mobile_number = mobile,
+            dob = dob,
+            gender = gender,
+            email_token = email_token
+        ) 
+        user_obj.set_password(password)
+        user_group = Group.objects.get(name = "USER")
+        user_obj.groups.add(user_group)
+        user_obj.save()
+
+        # sending welcome message
+        subject = "Account Created Successfully"
+        message = f'''Hello {fname},
+
+Welcome to chatter.com:8000,
+
+Your account has been created successfully. 
+
+you will shortly recieve in account activation email.
+Activate your account as soon as possible to start.
+
+Don't replay to this mail.
+This is auto generated mail.
+
+Best Regards,
+Chatter Team
+'''       
+        
+        send_email.delay(email = email, subject = subject, message = message)
+
+        # sending account activation email to the user
+        account_activation_email.delay(email = email, name = fname, email_token = email_token)
+        messages.success(request, "Registation Success.Verify the email and login. Check mail")
+        return redirect('login')
+    
     return render(request, 'accounts/register.html')

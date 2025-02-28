@@ -261,9 +261,67 @@ def reset_password(request):
             user.forget_token = gen_forget_token
             user.save()
 
-        reset_password_request_email.delay(user.first_name, email, gen_forget_token)
+        reset_password_request_email.delay(user.first_name, email, user.uid, gen_forget_token)
         messages.warning(request, "Reset password link has been send on your Registered Email!")
         return redirect('login')
     
             
     return render(request, 'accounts/reset_password.html')
+
+
+
+def change_password(request, user_id, forget_token):
+    # getting user
+    try:
+        user = CustomUser.objects.get(uid = user_id)
+
+        # checking the user with forget_token validation
+        if str(user.forget_token) == forget_token:
+            # getting the password
+            if request.method == "POST":
+                new_pass = request.POST.get('password')
+                re_pass = request.POST.get('repassword')
+
+                # checking both password matched or not
+                if new_pass != re_pass:
+                    messages.warning(request, "Both Password Doesn't Matched.")
+                    return HttpResponseRedirect(request.path_info)
+                
+                # setting or updating the password in the databases
+                user.set_password(new_pass)
+                user.forget_token = None
+                user.save()
+
+                # creating the email messages
+                subject = "Password Changed"
+                message = f'''Hello {user.first_name},
+
+Hopefully its you {user.first_name} requested for reset password on chatter.
+
+Your Login Password has been changed Successfully 
+
+If not request by you can change the password by login on http://chatter.com:8000 
+or you can safely ignore this email.
+
+Don't replay to this mail.
+This is auto generated mail.
+
+Best Regards,
+Chatter Team
+'''
+                # sending email to user
+                send_email.delay(subject, message, user.email)
+
+                messages.success(request, "Password has been Changed Successfully.")
+                return redirect('login')
+        # checking if link expired or not
+        else:
+            messages.warning(request, "Invalid Url or Expired.")
+            return redirect('reset_password')
+    
+    # rasing warning if user not exisits
+    except CustomUser.DoesNotExist():
+        messages.warning(request, "User Not Exists.")
+        return redirect("login")
+
+    return render(request, 'accounts/change_password.html')

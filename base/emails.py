@@ -24,7 +24,7 @@ Chatter Team
 
 #this function is used for the reset password email purpose
 @shared_task
-def reset_password_request_email(name, email, forget_token):
+def reset_password_request_email(name, email, user_id, forget_token):
     subject = "Reset Password Request"
     email_from = settings.EMAIL_HOST_USER
     message = f'''Hello {name},
@@ -32,7 +32,7 @@ def reset_password_request_email(name, email, forget_token):
 Hopefully its you {name} requested for reset password on chatter.
 Click on the below Link to reset login password.
 
-http://chatter.com:8000/accounts/password-reset/confirm/{forget_token}/ 
+http://chatter.com:8000/accounts/password-reset/ref={user_id}/confirm/tk={forget_token}/ 
 
 If not request by you can change the password by login on chatter.com:8000 
 or you can safely ignore this email.

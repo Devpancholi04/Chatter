@@ -61,7 +61,7 @@
 
                 {% include 'base/alert.html' %}
 
-                <form action="{% url 'login' %}" method="post"> {% csrf_token %}
+                <form action="{% url 'login' %}" method="post" enctype="multipart/form-data" autocomplete="off"> {% csrf_token %}
                     <div class="form-group">
                         <label for="email" class="form-label">Email</label>
                         <input type="email" class="form-control mb-2" placeholder="Email" id="email" name="email">
@@ -73,7 +73,7 @@
                     </div>
 
                     <div class="form-group">
-                        <p class="text-end"> <a href="#" >Forget Password?</a></p>
+                        <p class="text-end"> <a href="{% url 'reset_password' %}" >Forget Password?</a></p>
                     </div>
 
                     <div class="form-group text-center">

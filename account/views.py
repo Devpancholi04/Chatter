@@ -105,7 +105,7 @@ Chatter Team
         send_email.delay(email = email, subject = subject, message = message)
 
         # sending account activation email to the user
-        account_activation_email.delay(email = email, name = fname, email_token = email_token)
+        account_activation_email.delay(email = email, name = fname, user_id= user_obj.uid ,email_token = email_token)
         messages.success(request, "Registation Success.Verify the email and login. Check mail")
         return redirect('login')
     
@@ -139,7 +139,7 @@ def login_page(request):
                     user.email_token = email_token
                     user.save()
 
-                    account_activation_email.delay(email = user.email, name=user.first_name, email_token = email)
+                    account_activation_email.delay(email = user.email, name=user.first_name, user_id = user.uid, email_token = email)
                     messages.warning(request, "Email Not Verified! Link Send on registered Email..")
                     return HttpResponseRedirect(request.path_info)
                 

@@ -5,12 +5,12 @@ from celery import shared_task
 
 # this function is used for the account activation email
 @shared_task
-def account_activation_email(name, email, email_token):
+def account_activation_email(name, user_id, email, email_token):
     subject = "Account Activation Requireds"
     email_from = settings.EMAIL_HOST_USER
     message = f'''Hello {name},
 
-Click on the Link to activate your Account http://chatter.com:8000/accounts/activate/{email_token}/
+Click on the Link to activate your Account http://chatter.com:8000/accounts/ref={user_id}/activate/tk={email_token}/
 
 Don't replay to this mail.
 This is auto generated mail.

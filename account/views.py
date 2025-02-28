@@ -19,86 +19,6 @@ from django.conf import settings
 CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
 # Create your views here.
 
-def login_page(request):
-
-    if request.method == "POST":
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-
-        if not email or not password:
-            messages.warning(request, "Required email and password")
-            return HttpResponseRedirect(request.path_info)
-
-        try:
-            get_user = CustomUser.objects.get(email = email)
-
-            auth_user = authenticate(email = email, password = password)
-
-            if auth_user:
-                user = get_user
-
-                login(request, auth_user)
-
-                if user.status == "INACTIVE":
-                    email_token = str(uuid.uuid4())
-                    user.email_token = email_token
-                    user.save()
-
-                    account_activation_email.delay(email = user.email, name=user.first_name, email_token = email)
-                    messages.warning(request, "Email Not Verified! Link Send on registered Email..")
-                    return HttpResponseRedirect(request.path_info)
-                
-                if user.is_two_step_verification == True:
-                    user_id = user.user_id
-                    otp = gen_otp()
-                    request.session[user_id] = otp
-
-                    subject = "Login OTP verification"
-                    message = f'''Hello, {user.first_name}, 
-
-This Email can contain some senstivite information
-                    
-Your One Time Password for login is {otp}.
-This Otp is valid for 5 min only.
-
-Don't share OTP with anyone.
-
-Don't replay to this mail.
-This is auto generated mail.
-
-Best Regards,
-Chatter Team
-'''               
-                    send_email.delay()(subject=subject, message=message, email=user.email)
-                    return redirect('login', user.uid, user.username) # otp verification link will come here.
-                
-                # sending login email to the user if not activated two step verification mail
-
-                subject = "Login Attempt"
-                message = f'''Hello {user.first_name},
-
-New Login Attempt at {datetime.now().strftime('%d-%m-Y %H:%M:%S')}
-
-if not attempt login by you. Change the password as soon as possbile.
-
-Don't replay to this mail.
-This is auto generated mail.
-
-Best Regards,
-Chatter Team
-'''
-                send_email.delay(subject=subject, message=message, email=user.email)
-                return HttpResponse(request, "<h1> Login Success </h1>") # add the login of the home page after login to be redirect user
-
-                     
-
-        except CustomUser.DoesNotExist():
-            messages.warning(request, "user not found!")
-            return HttpResponseRedirect(request.path_info)
-        
-
-    return render(request, 'accounts/login.html')
-
 
 
 def registration_page(request):
@@ -192,6 +112,129 @@ Chatter Team
     return render(request, 'accounts/register.html')
 
 
+
+
+def login_page(request):
+
+    if request.method == "POST":
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+
+        if not email or not password:
+            messages.warning(request, "Required email and password")
+            return HttpResponseRedirect(request.path_info)
+
+        try:
+            get_user = CustomUser.objects.get(email = email)
+
+            auth_user = authenticate(email = email, password = password)
+
+            if auth_user:
+                user = get_user
+
+                login(request, auth_user)
+
+                if user.status == "INACTIVE":
+                    email_token = str(uuid.uuid4())
+                    user.email_token = email_token
+                    user.save()
+
+                    account_activation_email.delay(email = user.email, name=user.first_name, email_token = email)
+                    messages.warning(request, "Email Not Verified! Link Send on registered Email..")
+                    return HttpResponseRedirect(request.path_info)
+                
+                if user.is_two_step_verification == True:
+                    user_id = user.user_id
+                    otp = gen_otp()
+                    request.session[user_id] = otp
+
+                    subject = "Login OTP verification"
+                    message = f'''Hello, {user.first_name}, 
+
+This Email can contain some senstivite information
+                    
+Your One Time Password for login is {otp}.
+This Otp is valid for 5 min only.
+
+Don't share OTP with anyone.
+
+Don't replay to this mail.
+This is auto generated mail.
+
+Best Regards,
+Chatter Team
+'''               
+                    send_email.delay()(subject=subject, message=message, email=user.email)
+                    return redirect('verify_otp', user.uid, user.username) # otp verification link will come here.
+                
+                # sending login email to the user if not activated two step verification mail
+
+                subject = "Login Attempt"
+                message = f'''Hello {user.first_name},
+
+New Login Attempt at {datetime.now().strftime('%d-%m-Y %H:%M:%S')}
+
+if not attempt login by you. Change the password as soon as possbile.
+
+Don't replay to this mail.
+This is auto generated mail.
+
+Best Regards,
+Chatter Team
+'''
+                send_email.delay(subject=subject, message=message, email=user.email)
+                return HttpResponse(request, "<h1> Login Success </h1>") # add the login of the home page after login to be redirect user
+
+                     
+
+        except CustomUser.DoesNotExist():
+            messages.warning(request, "user not found!")
+            return HttpResponseRedirect(request.path_info)
+        
+
+    return render(request, 'accounts/login.html')
+
+
+# account activation
+def activate_account(request, user_id, email_token):
+    try:
+        user = CustomUser.objects.get(uid = user_id)
+        
+        if str(user.email_token) == email_token:
+            user.status = "ACTIVE"
+            user.is_active = True
+            user.save()
+
+            subject = "Account Activated"
+            message = f'''Hello {user.first_name},
+
+congraulations your account has been Activated.
+
+Now you can login using website or
+click the link below to login
+
+http://chatter.com:8000/accounts/login/
+
+Don't replay to this mail.
+This is auto generated mail.
+
+Best Regards,
+Chatter Team
+'''
+            
+            send_email.delay(subject, message, user.email)
+            messages.success(request, "Your Account has been verified! Now you can Login.")
+            return redirect('login')
+        else:
+            messages.warning(request,"Activation link Exipred or Invalid!")
+            return redirect('login')
+    
+    except CustomUser.DoesNotExist():
+        messages.warning(request, "user Not Exists.")
+        return redirect('login')
+
+
+# Two step verification
 def verify_otp(request, user_id, username):
 
     # getting the data from cache
@@ -231,7 +274,7 @@ def verify_otp(request, user_id, username):
 
 
 
-
+# forget password or reset password
 def reset_password(request):
 
     # getting the data from cache
@@ -269,7 +312,7 @@ def reset_password(request):
     return render(request, 'accounts/reset_password.html')
 
 
-
+# change password at login page
 def change_password(request, user_id, forget_token):
     # getting user
     try:
@@ -300,7 +343,7 @@ Hopefully its you {user.first_name} requested for reset password on chatter.
 
 Your Login Password has been changed Successfully 
 
-If not request by you can change the password by login on http://chatter.com:8000 
+If not request by you can change the password by login on http://chatter.com:8000/accounts/login
 or you can safely ignore this email.
 
 Don't replay to this mail.
@@ -316,12 +359,18 @@ Chatter Team
                 return redirect('login')
         # checking if link expired or not
         else:
-            messages.warning(request, "Invalid Url or Expired.")
+            messages.warning(request, "Reset Password link is invalid or Expired!")
             return redirect('reset_password')
     
-    # rasing warning if user not exisits
+    # rasing warning if user not exisits.
     except CustomUser.DoesNotExist():
         messages.warning(request, "User Not Exists.")
         return redirect("login")
 
     return render(request, 'accounts/change_password.html')
+
+    
+# logout page
+def logout_page(request):
+    logout(request)
+    return redirect('login')

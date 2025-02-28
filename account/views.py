@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 import uuid
-from base.emails import account_activation_email, send_email
+from base.emails import account_activation_email, send_email, reset_password_request_email
 from base.otp import gen_otp
 from datetime import datetime
 from django.contrib.auth.models import User, Group
@@ -227,3 +227,43 @@ def verify_otp(request, user_id, username):
         return redirect('login')
 
     return render(request, 'accounts/two_step_verification.html')
+
+
+
+
+
+def reset_password(request):
+
+    # getting the data from cache
+    all_user_data_cache_key = "ALL-USER-DATA-CACHE"
+    get_all_user_data = cache.get(all_user_data_cache_key)
+
+    # if data is not in the cache setting the data in the cache
+    if not get_all_user_data:
+        get_all_user_data = CustomUser.objects.all()
+        cache.set(all_user_data_cache_key, list(get_all_user_data), timeout=CACHE_TTL)
+
+
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        # checking the user
+        
+        user = next((user_data for user_data in get_all_user_data if user_data.email == email), None)
+        
+        if not user:
+            messages.warning(request, "Invalid Email or not registered")
+            return HttpResponseRedirect(request.path_info)
+
+        gen_forget_token = user.forget_token
+            
+        if gen_forget_token is None:
+            gen_forget_token = str(uuid.uuid4())
+            user.forget_token = gen_forget_token
+            user.save()
+
+        reset_password_request_email.delay(user.first_name, email, gen_forget_token)
+        messages.warning(request, "Reset password link has been send on your Registered Email!")
+        return redirect('login')
+    
+            
+    return render(request, 'accounts/reset_password.html')

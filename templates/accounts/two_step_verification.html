@@ -14,6 +14,15 @@
     </div>
 {% endblock simple_navbar_side %}
 
+{% block internal_css %}
+<style>
+    #spinner{
+        display: none;
+    }
+</style>
+
+{% endblock internal_css %}
+
 
 {% block body %}
 
@@ -29,7 +38,7 @@
 
             <h4 class="text-center">Two Step Verification</h4>
 
-            <form action="" method="post" enctype="multipart/form-data" autocomplete="off">
+            <form action="" method="post" enctype="multipart/form-data" autocomplete="off"> {% csrf_token %}
 
                 <div class="mb-3 form-group">
                     <label for="otp" class="form-label">One Time Password *</label>

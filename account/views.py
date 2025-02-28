@@ -70,7 +70,7 @@ Best Regards,
 Chatter Team
 '''               
                     send_email.delay()(subject=subject, message=message, email=user.email)
-                    return HttpResponse(request, "<h1> Login Success </h1>") # otp verification link will come here.
+                    return redirect('login', user.uid, user.username) # otp verification link will come here.
                 
                 # sending login email to the user if not activated two step verification mail
 
@@ -190,3 +190,40 @@ Chatter Team
         return redirect('login')
     
     return render(request, 'accounts/register.html')
+
+
+def verify_otp(request, user_id, username):
+
+    # getting the data from cache
+    all_user_data_cache_key = "ALL-USER-DATA-CACHE"
+    get_all_user_data = cache.get(all_user_data_cache_key)
+
+    # if data is not in the cache setting the data in the cache
+    if not get_all_user_data:
+        get_all_user_data = CustomUser.objects.all()
+        cache.set(all_user_data_cache_key, list(get_all_user_data), timeout=CACHE_TTL)
+
+
+    # checking the user
+    try:
+        user = next((user_data for user_data in get_all_user_data if str(user_data.uid) == user_id), None)
+    
+        
+        if request.method == "POST":
+            user_otp = request.POST.get('otp')
+            session_otp = request.session.get(user_id)
+
+            if session_otp == user_otp:
+                del request.session[user_id]
+
+                return redirect() #redirect to home page
+        
+            else:
+                messages.warning(request, "Invalid OTP.")
+                return HttpResponseRedirect(request.path_info)
+    
+    except user.DoesNotExist():
+        messages.warning(request, "Invalid username")
+        return redirect('login')
+
+    return render(request, 'accounts/two_step_verification.html')

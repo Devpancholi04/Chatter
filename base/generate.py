@@ -11,7 +11,12 @@ class generate_ids:
         return slugify(userId)
 
 
+    def gen_mess_id(self):
+        mess_id = f"mss{"".join(random.choice(string.digits) for _ in range(5))}"
+        return slugify(mess_id)
 
 if __name__ == "__main__":
     a = generate_ids()
     a.gen_user_id('dev')
+    print(a.gen_mess_id())
+    

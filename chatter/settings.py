@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django_celery_beat',
 
     'account',
+    'chat',
 ]
 
 MIDDLEWARE = [

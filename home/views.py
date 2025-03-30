@@ -4,4 +4,4 @@ from django.http import HttpResponse
 
 def home_page(request):
     # /media/images/user_logo/user_img.jpg
-    return render(request, "home/home_page.html")
+    return render(request, "chat/chat_page.html")

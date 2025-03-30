@@ -1,0 +1,297 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #d9d9e5;
+    padding: 15px 20px;
+    width: 100%;
+}
+
+.logo img {
+    width: 150px;
+    height: auto;  
+    object-fit: contain;
+}
+
+/* search bar css */
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    margin-left: 20px;
+}
+
+.search-bar input[type="text"] {
+    padding: 10px 14px;
+    border: 2px solid #007bff;
+    border-radius: 20px;
+    outline: none;
+    width: 300px;
+}
+
+.search-icon {
+    margin-left: -30px;
+    color: #007bff;
+}
+
+/* search bar css ends */
+
+
+/* navbar items starts */
+
+.navbar ul {
+    list-style: none;
+    display: flex;
+    align-items: center;
+}
+
+.navbar ul li {
+    margin: 0 15px;
+}
+
+.navbar ul li a {
+    color: black;
+    text-decoration: none;
+    font-size: 18px;
+}
+
+.navbar ul li a:hover {
+    color: #3f3737;
+}
+
+.navbar ul li a i {
+    margin-right: 5px;
+}
+
+/* navbar items ends */
+
+
+/* notification styling starts */
+
+.notification-section {
+    position: relative;
+    cursor: pointer;
+}
+
+#bell-icon {
+    font-size: 1.5rem;
+    color: black;
+    position: relative;
+}
+
+#bell-icon::after {
+    content: attr(data-count);
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: red;
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: bold;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    visibility: hidden;
+}
+
+#bell-icon[data-count]:not([data-count="0"])::after {
+    visibility: visible;
+}
+
+/* Notification Dropdown */
+.notification-dropdown {
+    display: none;
+    position: absolute;
+    top: 40px;
+    right: 0;
+    background-color: #ffffff;
+    border: 2px solid #d1d5db;
+    border-radius: 16px;
+    width: 320px;
+    max-height: 400px; 
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #4CAF50 #f0f2f5;
+    animation: expandDown 0.3s ease-in-out;
+}
+
+/* Scrollbar Styling */
+.notification-dropdown::-webkit-scrollbar {
+    width: 8px;
+}
+
+.notification-dropdown::-webkit-scrollbar-thumb {
+    background-color: #4CAF50;
+    border-radius: 10px;
+}
+
+.notification-dropdown::-webkit-scrollbar-track {
+    background-color: #f0f2f5;
+}
+
+/* Notification List */
+#notificationList {
+    list-style: none;
+    padding: 10px;
+    margin: 0;
+    display: flex;
+    flex-direction: column;  
+    gap: 10px;
+}
+
+#notificationList li {
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 12px 15px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: background 0.2s ease-in-out;
+}
+
+#notificationList li:hover {
+    background: #e3f2fd;
+}
+
+.notification-icon {
+    background-color: #4CAF50;
+    color: #fff;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#markAllRead {
+    background-color: #2196F3;
+    color: #fff;
+    border: none;
+    width: 100%;
+    padding: 10px;
+    border-bottom-left-radius: 16px;
+    border-bottom-right-radius: 16px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+#markAllRead:hover {
+    background-color: #1976D2;
+}
+
+.show {
+    display: block;
+}
+
+/* Animation for dropdown */
+@keyframes expandDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+/* notification styling ends */
+
+/* dark/light mode toggle button starts */
+.navbar .toogle-btn button{
+    border: none;
+    font-size: 1.5rem;
+    background-color: #d9d9e5;
+    cursor: pointer;
+}
+/* dark/light mode toggle button ends */
+
+
+/* user profile starts */
+.user-dropdown {
+    position: relative;
+    padding: 12px 18px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    color: black;
+    transition: background 0.3s ease;
+}
+
+/* User Info Section */
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+}
+
+.user-info .user-icon {
+    border-radius: 50%; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: #fff;
+    width: 150px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+    overflow: hidden;
+}
+
+.user-dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+.user-dropdown .dropdown-menu a{
+    text-decoration: none;
+}
+
+
+/* Buttons in Dropdown */
+.dropdown-menu .btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 12px;
+    background: #fff;
+    color: #333;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.dropdown-menu .btn:hover {
+    background: #f0f2f5;
+}
+
+.dropdown-menu .logout-btn:hover {
+    background: #e04e3e;
+    color: white;
+}

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %} {% endblock title %}</title>
+    {% block metatag %} {% endblock metatag %}
+
+    <link rel="stylesheet" href="/media/css/base/main_navbar.css">
+    {% block external_css %} {% endblock external_css %}
+    {% block internal_css %} {% endblock internal_css %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <img src="/media/images/logo/main-rbg.png" alt="brand-logo">
+        </div>
+
+        <div class="search-bar">
+            <input type="text" id="chatSearch" placeholder="Search...">
+            <i class="fas fa-search search-icon"></i>
+        </div>
+
+        <ul>
+            <li><a href="#"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="#"><i class="fas fa-comments"></i> Chat Now</a></li>
+            <li><a href="#"><i class="fas fa-users"></i> Friends Requests</a></li>
+            <div class="notification-section">
+                <i class="fas fa-bell" id="bell-icon"></i>
+                <div class="notification-dropdown" id="notification-dropdown">
+                    <ul id="notificationList"></ul>
+                    <button id="markAllRead">Mark All as Read</button>
+                </div>
+            </div>
+            <li>
+                <div class="toogle-btn">
+                    <button id="theme-btn" class="btn btn-outline-light">
+                        <i class="fa-solid fa-moon" id="theme-icon"></i>
+                    </button>
+                </div>
+            </li>
+        </ul>
+
+        <div class="user-dropdown">
+            <div class="user-info">
+                <i class="fas fa-user-circle user-icon" id="user-icon"></i>
+                <i class="fas fa-chevron-down dropdown-arrow"></i>
+            </div>
+            <div class="dropdown-menu" id="dropdown-menu">
+                <a href="#" class="btn"><i class="fas fa-user"></i> Profile</a>
+                <a href="#" class="btn"><i class="fas fa-cog"></i> Settings</a>
+                <a href="#" class="btn logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    {% block body %}
+
+    {% endblock body %}
+
+
+    {% block external_js %} {% endblock external_js %}
+    {% block internal_js %} {% endblock internal_js %}
+
+</body>
+</html>

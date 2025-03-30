@@ -25,6 +25,7 @@ urlpatterns = [
     path("favicon.ico", RedirectView.as_view(url = ('/media/images/favicon/favicon.ico'))), # added favicon
     path('admin/', admin.site.urls),
     path('accounts/', include('account.urls')),
+    path('', include('home.urls')),
 ]
 
 

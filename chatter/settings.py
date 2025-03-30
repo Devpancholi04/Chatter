@@ -36,6 +36,7 @@ AUTH_USER_MODEL = 'account.CustomUser'
 
 INSTALLED_APPS = [
     'daphne',
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -46,6 +47,7 @@ INSTALLED_APPS = [
 
     'account',
     'chat',
+    'home',
 ]
 
 MIDDLEWARE = [

@@ -3,5 +3,5 @@ from django.http import HttpResponse
 # Create your views here.
 
 def home_page(request):
-
-    return render(request, "base/main_navbar.html")
+    # /media/images/user_logo/user_img.jpg
+    return render(request, "home/home_page.html")

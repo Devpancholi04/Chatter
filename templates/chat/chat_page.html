@@ -155,7 +155,7 @@
 
     <div class="chat-container" id="chatContainer">
         
-        <div class="chat-box">
+        <!-- <div class="chat-box">
             <div class="chat-headering">
                 <img src="/media/images/user_logo/user_img.jpg" alt="user-logo" class="chat-user-icon">
                 <span class="chat-user-name">Dev Pancholi</span>
@@ -167,8 +167,12 @@
                     <button onclick="sendMessage()">Send</button>
                 </form>
             </div>
-        </div>
+        </div> -->
 
     </div>
 </div>
 {% endblock %}
+
+{% block external_js %}
+<script src="/media/js/base/toggle-d-l.js"></script>
+{% endblock external_js %}

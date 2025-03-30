@@ -5,6 +5,11 @@
     font-family: Arial, sans-serif;
 }
 
+.dark-mode {
+    background-color: #222;
+    color: #d9d9e5;
+}
+
 .navbar {
     display: flex;
     align-items: center;
@@ -15,12 +20,23 @@
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
+.dark-mode .navbar {
+    background: #111;
+    color: #d9d9e5;
+}
+
 .logo img {
     width: 150px;
     height: auto;  
     object-fit: contain;
 }
 
+.dark-mode .logo img{
+    background-color: #d9d9e5;
+    opacity: 0.9;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);;
+}
 /* search bar css */
 
 .search-bar {
@@ -63,8 +79,16 @@
     font-size: 18px;
 }
 
+.dark-mode .navbar ul li a{
+    color: #d9d9e5;
+}
+
 .navbar ul li a:hover {
     color: #3f3737;
+}
+
+.dark-mode .navbar ul li a:hover{
+    color: #a0a0a7;
 }
 
 .navbar ul li a i {
@@ -85,6 +109,10 @@
     font-size: 1.5rem;
     color: black;
     position: relative;
+}
+
+.dark-mode #bell-icon{
+    color: #d9d9e5;
 }
 
 #bell-icon::after {
@@ -220,6 +248,10 @@
 }
 /* dark/light mode toggle button ends */
 
+.dark-mode .navbar .toogle-btn button{
+    background-color: #111;
+    color: #d9d9e5;
+}
 
 /* user profile starts */
 .user-dropdown {
@@ -232,6 +264,10 @@
     cursor: pointer;
     color: black;
     transition: background 0.3s ease;
+}
+
+.dark-mode .user-dropdown{
+    color: #d9d9e5;
 }
 
 /* User Info Section */

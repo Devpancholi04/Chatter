@@ -34,41 +34,62 @@ def chat_page_sidebar(request, uid, username):
     # print(f"User : {user.username}")
 
     chat_recent_key = f"CHAT-RECENT-KEY: {uid} - {username}"
-    get_recent_message = cache.get(chat_recent_key)
+    recent_message = cache.get(chat_recent_key)
     
     # if get_recent_message:
     #     print(f"from cahce : {get_recent_message}")
+    if not recent_message:
+        chats = Message.objects.filter(Q(sender=user) | Q(receiver=user) | Q(group__members = user))
     
-    chats = Message.objects.filter(Q(sender=user) | Q(receiver=user))
+        chat_users = {}
+        groups = {}
     
-    chat_users = {}
-    
-    for chat in chats:
-        chat_user = chat.sender if chat.sender != user else chat.receiver
+        for chat in chats:
+            if chat.is_group_message and chat.group:
+                if chat.group.group_id not in groups:
+                    last_message = Message.objects.filter(group = chat.group).order_by('-updated_at').first()
+                    unread_count = Message.objects.filter(group = chat.group, is_read = False).count()
+
+                    groups[chat.group.group_id] = {
+                        'group_id' : chat.group.group_id,
+                        'image_url' : chat.group.image.url if chat.group.image else '/media/images/user_logo/group_img.jpg',
+                        'full_name' : chat.group.group_name,
+                        'last_message' : last_message.message if last_message else '',
+                        'last_msg_time' : last_message.updated_at.strftime('%I:%M %p') if last_message else '',
+                        'unread_count' : unread_count 
+                    }
+            else:
+                chat_user = chat.sender if chat.sender != user else chat.receiver
         
-        if chat_user.uid not in chat_users:
-            last_message = Message.objects.filter(
-                (Q(sender=chat_user, receiver=user) | Q(sender=user, receiver=chat_user))
-            ).order_by('-updated_at').first()
+                if chat_user.uid not in chat_users:
+                    last_message = Message.objects.filter(
+                        (Q(sender=chat_user, receiver=user) | Q(sender=user, receiver=chat_user))
+                    ).order_by('-updated_at').first()
             
-            unread_count = Message.objects.filter(
-                sender=chat_user, receiver=user, is_read=False
-            ).count()
+                    unread_count = Message.objects.filter(
+                        sender=chat_user, receiver=user, is_read=False
+                    ).count()
             
-            chat_users[chat_user.uid] = {
-                'uid': chat_user.uid,
-                'full_name': f"{chat_user.first_name} {chat_user.last_name}",
-                'username': chat_user.username,
-                'last_message': last_message.message if last_message else '',
-                'last_msg_time': last_message.updated_at.strftime('%I:%M %p') if last_message else '',
-                'unread_count': unread_count
-            }
+                    chat_users[chat_user.uid] = {
+                        'uid': chat_user.uid,
+                        'image_url' : chat_user.profile_photos.url if chat_user.profile_photos else '/media/images/user_logo/user_img.jpg',
+                        'full_name': f"{chat_user.first_name} {chat_user.last_name}",
+                        'username': chat_user.username,
+                        'last_message': last_message.message if last_message else '',
+                        'last_msg_time': last_message.updated_at.strftime('%I:%M %p') if last_message else '',
+                        'unread_count': unread_count
+                    }
+
+        recent_message_chat_list = list(chat_users.values())
+        recent_message_group_list = list(groups.values())
+        
+        combined_list = recent_message_chat_list + recent_message_group_list
+
+        recent_message = sorted(combined_list, key=lambda x:x['last_msg_time'])
+        print(f"recent message : {recent_message}")
+        cache.set(chat_recent_key, recent_message, timeout=DEFAULT_TIMEOUT)
     
-    sorted_chat_list = sorted(chat_users.values(), key=lambda x: x['last_msg_time'], reverse=True)
-    
-    cache.set(chat_recent_key, sorted_chat_list, timeout=DEFAULT_TIMEOUT)
-    
-    return Response({'message': sorted_chat_list})
+    return Response({'message': recent_message})
 
 
 

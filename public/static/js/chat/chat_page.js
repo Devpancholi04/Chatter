@@ -33,7 +33,7 @@ $(document).ready(function() {
                 <a href="" class="chatting">
                     <div class="chat-item">
                         <div class="user-icon">
-                            <img src="/media/images/user_logo/user_img.jpg" alt="user-logo">
+                            <img src="${chat.image_url}" alt="user-logo">
                         </div>
     
                         <div class="chat-details">

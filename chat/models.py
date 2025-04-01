@@ -15,7 +15,7 @@ class Group(models.Model):
     group_name = models.CharField(max_length=50)
 
     description = models.TextField(null=True, blank=True)
-    image = models.ImageField(upload_to='group/group_logos/', null=True, blank=True)
+    image = models.ImageField(upload_to='/images/group/group_logos/', null=True, blank=True)
 
     admin = models.ForeignKey(CustomUser, related_name="group_admin", on_delete=models.CASCADE)
     members = models.ManyToManyField(CustomUser, related_name="group")

@@ -192,6 +192,20 @@ hr {
     flex-grow: 1;
 }
 
+.chat-headering .close-btn{
+    margin-right: 25px; 
+    width: 40px;
+    font-size: larger;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.chat-headering .close-btn:hover{
+    background-color: red;
+    cursor: pointer;
+}
+
+
 
 
 .messages {
@@ -204,16 +218,54 @@ hr {
     padding: 10px;
     margin: 5px;
     border-radius: 10px;
-    max-width: 70%;
+    max-width: 100%;
 }
 
 .sent {
     align-self: flex-end;
     background: #dcf8c6;
+    padding: 10px;
+    text-align: right;
+    border-radius: 15px;
+    border-bottom-right-radius: 0px;
+    max-width: 60%;
 }
+.dark-mode .sent{
+    color: black;
+}
+
 .received {
     align-self: flex-start;
     background: #ffffff;
+    padding: 10px;
+    text-align: left;
+    border-radius: 15px;
+    border-top-left-radius: 0px;
+    max-width: 60%;
+}
+.dark-mode .received{
+    color: black;
+}
+
+.message-time {
+    font-size: 10px;
+    color: #666;
+    display: block;
+    margin-top: 5px;
+    text-align: right;
+}
+
+.dark-mode .message-time{
+    color: black;
+}
+
+.sender-name{
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    text-align: left;
+    color: blue;
+    text-decoration: underline;
 }
 
 .message-input {
@@ -239,6 +291,7 @@ hr {
     border: 1px solid #ccc;
     border-radius: 20px;
     outline: none;
+    margin-right: 5px;
     transition: border-color 0.3s ease-in-out;
 }
 

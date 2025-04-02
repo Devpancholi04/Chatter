@@ -92,19 +92,73 @@ def chat_page_sidebar(request, uid, username):
     return Response({'message': recent_message})
 
 
-
+@api_view(['GET'])
 def load_history(request, uid, username, rec_uid, rec_username):
 
     chat_cache_id = f"CHAT:CACHE:send{uid}-{username} : rec:{rec_uid}-{rec_username}"
-    chat_buffer_id = f"CHAT:CACHE:send{uid}-{username} : rec:{rec_uid}-{rec_username}"
 
-    get_messages = cache.get(chat_cache_id)
+    list_messages = cache.get(chat_cache_id)
 
-    if not get_messages:
-        get_messages = Message.objects.filter(sender__uid = uid, sender__username=username, receiver__uid = rec_uid, receiver__username=rec_username).values()
-        # print("data from db")
-        cache.set(chat_cache_id, list(get_messages), timeout=CACHE_TTL)
+    list_messages_data = {}
 
-    print(get_messages)
+    if not list_messages:
+        list_messages = Message.objects.filter(
+            (Q(sender__uid = uid, sender__username=username, receiver__uid = rec_uid, receiver__username=rec_username) | Q(sender__uid = rec_uid, sender__username =rec_username, receiver__uid = uid, receiver__username = username))
+        ).values().order_by('updated_at')
+        
+        for val in list_messages:
+            list_messages_data[val['sender_id']] = {
+                'message_id' : val['message_id'],
+                'sender_id' : val['sender_id'],
+                'receiver_id' : val['receiver_id'],
+                'message' : val['message'],
+                'is_send' : True if val['sender_id'] == username else False,
+                'is_read' : val['is_read'],
+                'date' : val['updated_at'].strftime("%d- %m-%Y"),
+                'time' : val['updated_at'].strftime("%I:%M %p"),
+            }
+        list_messages = list_messages_data
+        
+        cache.set(chat_cache_id, list_messages_data, timeout=CACHE_TTL)
 
-    return JsonResponse({'Messages' : list(get_messages)}, safe=False)
+    return Response({'Messages' : list_messages})
+
+
+@api_view(['GET'])
+def load_group_history(request, group_id, uid, username):
+    print(username)
+    group_chat_history_id = f"GROUP-CHAT-CACHE:{group_id} - {uid}"
+    list_messages = cache.get(group_chat_history_id)
+
+    if not list_messages:
+        try:
+            get_group = Group.objects.get(group_id = group_id)
+        except Group.DoesNotExist:
+            return Response({'error': 'Group does not exist'}, status=404)
+        
+        messages = Message.objects.filter(group = get_group, is_group_message=True).order_by('updated_at')
+
+        list_messages = [
+            {
+                'message_id' : msg.message_id,
+                'sender_id' : msg.sender.username,
+                'received_id' : {
+                    'all_member_list' : [member.username for member in get_group.members.all()],
+                },
+                'sender_name' : f"{msg.sender.first_name} {msg.sender.last_name}",
+                'message' : msg.message,    
+                'is_send' : True if msg.sender.username == username else False,
+                'is_read' : msg.is_read,
+                'date' : msg.updated_at.strftime("%d-%m-%Y"),
+                'time' : msg.updated_at.strftime("%I:%M %p"),
+            }
+            for msg in messages
+        ]
+            
+        cache.set(group_chat_history_id, list_messages, timeout=CACHE_TTL)
+
+    return Response({'Messages' : list_messages})
+
+
+        
+

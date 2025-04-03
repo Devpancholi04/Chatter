@@ -95,7 +95,7 @@ def chat_page_sidebar(request, uid, username):
 @api_view(['GET'])
 def load_history(request, uid, username, rec_uid, rec_username):
 
-    chat_cache_id = f"CHAT:CACHE:send{uid}-{username} : rec:{rec_uid}-{rec_username}"
+    chat_cache_id = f"CHAT:CACHE:send-{uid}-{username} : rec:{rec_uid}-{rec_username}"
 
     list_messages = cache.get(chat_cache_id)
 
@@ -107,7 +107,7 @@ def load_history(request, uid, username, rec_uid, rec_username):
         ).values().order_by('updated_at')
         
         for val in list_messages:
-            list_messages_data[val['sender_id']] = {
+            list_messages_data[val['message_id']] = {
                 'message_id' : val['message_id'],
                 'sender_id' : val['sender_id'],
                 'receiver_id' : val['receiver_id'],

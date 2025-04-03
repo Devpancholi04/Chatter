@@ -60,7 +60,7 @@ $(document).ready(function() {
 
     setInterval(function(){
         fetchRecentChatDetails(uuid, username)
-    }, 10000);
+    }, 60000);
 
 });
 

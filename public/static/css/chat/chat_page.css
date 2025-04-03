@@ -229,6 +229,7 @@ hr {
     border-radius: 15px;
     border-bottom-right-radius: 0px;
     max-width: 60%;
+    margin-top: 8px;
 }
 .dark-mode .sent{
     color: black;

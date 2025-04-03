@@ -229,7 +229,7 @@ hr {
     border-radius: 15px;
     border-bottom-right-radius: 0px;
     max-width: 60%;
-    margin-top: 8px;
+    margin-top: 5px;
 }
 .dark-mode .sent{
     color: black;
@@ -243,6 +243,7 @@ hr {
     border-radius: 15px;
     border-top-left-radius: 0px;
     max-width: 60%;
+    margin-top: 5px;
 }
 .dark-mode .received{
     color: black;

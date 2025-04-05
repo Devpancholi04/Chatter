@@ -93,8 +93,6 @@ function openChat(name, image_url, chat){
     
     load_old_messages(chat_data)
 
-
-
     const inputField = document.getElementById('messageInput');
     const sendButton = document.getElementById('sendBtn');
 
@@ -113,13 +111,25 @@ function openChat(name, image_url, chat){
 function sendMessage(){
     const input = document.getElementById('messageInput');
 
-    if (input.value.trim() !== ''){
+    if (input.value.trim() !== '' && chatSocket){
+        const messageData = JSON.stringify({
+            'message' : input.value,
+        });
+        
+        const getTime = getCurrentDateTime();
+
+        chatSocket.send(messageData);
+        // DisplayMessage(input.value, getTime, true);
         input.value = '';
     }
 }
 
 
 function CloseBtn(){
+    if (chatSocket){
+        chatSocket.close();
+        chatSocket = null;
+    }
     document.getElementById('chatContainer').innerHTML = '';
 }
 
@@ -151,13 +161,33 @@ function load_old_messages(chat){
                 let messageArray = Object.values(data.Messages);
                 
                 messageArray.forEach(msg => {
-                    let isSender = msg.is_send;
-                    let datetime = `${msg.date} ${msg.time}`;
-                    DisplayMessage(msg.message,datetime,isSender);
+                    DisplayMessage(msg.message,`${msg.date} ${msg.time}` ,msg.is_send);
                 });
 
             })
             .catch(error => console.error('error while fetching data ', error));
+
+            chatSocket = new WebSocket(`ws://${window.location.host}/ws/chats/${uuid}/${username}/${chat.username}/`);
+
+            chatSocket.onopen = function(){
+                console.log("✅ WebSocket connection opened.");
+            }
+
+            chatSocket.onclose = function () {
+                console.warn("⚠️ WebSocket connection closed.");
+            };
+
+
+            chatSocket.onmessage = function(event){
+                const data = JSON.parse(event.data);
+                let datetime = `${data.date} ${data.time}`;
+                // console.log(data.is_send);
+                DisplayMessage(data.message, datetime, data.is_send);
+            };
+
+            chatSocket.onerror = function (e) {
+                console.error("❌ WebSocket error:", e);
+            };
     }
 }
 
@@ -205,3 +235,26 @@ function DisplayGroupMessages(message, senderName, time, isSender){
     messageContainer.scrollTop = messageContainer.scrollHeight;
 }
 
+
+
+function getCurrentDateTime(){
+    const now = new Date();
+
+    const date = now.getDate();
+    const month = now.getMonth() + 1;
+    const year = now.getFullYear();
+
+    let hours = now.getHours();
+    const minute = now.getMinutes();
+
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    hours = String(hours).padStart(2, '0');
+
+    const formatDate = `${date}-${month}-${year}`;
+    const formateTime = `${hours}:${minute} ${ampm}`
+
+    return `${formatDate} ${formateTime}`;
+}

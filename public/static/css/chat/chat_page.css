@@ -1,3 +1,13 @@
+::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* For Firefox */
+  * {
+    scrollbar-width: none; /* Hide scrollbar */
+    -ms-overflow-style: none;  /* IE and Edge */
+  }
+
 body{
     background-color: #d9d9d9;
 }
@@ -149,7 +159,7 @@ hr {
     color: #888;
 }
 
-.dark-mode .message-time{
+.dark-mode .chat-base .message-time{
     color: white;
 }
 
@@ -214,7 +224,7 @@ hr {
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    margin-bottom: 60px;
+    margin-bottom: 60px !important;
     padding: 10px;
     margin: 5px;
     border-radius: 10px;

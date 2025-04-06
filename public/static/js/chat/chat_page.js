@@ -1,71 +1,78 @@
+// here called the ajax for fetching recent chats 
 $(document).ready(function() {
     let uuid = document.getElementById('uid').innerText;
     let username = document.getElementById('username').innerText;
-    // console.log(uuid);
-    // console.log(username);
-    function fetchRecentChatDetails(uid, username){
 
-        $.ajax({
-            url: `/chats/api/recent-messages/${uid}/ref=${username}/`,
-            type: "GET",
-            datatype: "json",
-            success: function(response){
-                // console.log("Response : " + response);
-
-                let chats = response.message || [];
-                if (Array.isArray(chats)){
-                    updateChatSection(chats);
-                }
-            },
-        });
-    }
-
-
-    function updateChatSection(chats){
-        const chatContainer = document.getElementById("list-contacts")
-        chatContainer.innerHTML = "";
-
-        chats.forEach(chat => {
-            const chatElement = document.createElement("li");
-            chatElement.classList.add("contact");
-            
-            chatElement.innerHTML = `
-                <div class="chatting" onclick='openChat("${chat.full_name}", "${chat.image_url}","${encodeURIComponent(JSON.stringify(chat))}")'>
-                    <div class="chat-item">
-                        <div class="user-icon">
-                            <img src="${chat.image_url}" alt="user-logo">
-                        </div>
+    // after updating the chats on the sidebar ui then this will be used for updating the ui when new message received
     
-                        <div class="chat-details">
-                            <div class="chat-headers">
-                                <span class="chat-name">${chat.full_name}</span>
-                                <span class="message-count"> ${chat.unread_count} </span>
-                            </div>
-                                    
-                            <div class="chat-base">
-                                <p class="message-preview"> ${chat.last_message} </p>
-                                <p class="message-time"> ${chat.last_msg_time} </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-            const createElement1 = document.createElement("hr");
-            chatContainer.append(chatElement);
-            chatContainer.append(createElement1);
-        });
-    }
 
+    // fetch recent function is called
     fetchRecentChatDetails(uuid, username);
 
+    // here set that this fetch Recent message function is called after evert 1 minute
     setInterval(function(){
         fetchRecentChatDetails(uuid, username)
     }, 60000);
 
 });
 
+// after fetching the recent chats update on the ui
+function updateChatSection(chats){
+    const chatContainer = document.getElementById("list-contacts")
+    chatContainer.innerHTML = "";
+
+    chats.forEach(chat => {
+        const chatElement = document.createElement("li");
+        chatElement.classList.add("contact");
+        
+        chatElement.innerHTML = `
+            <div class="chatting" onclick='openChat("${chat.full_name}", "${chat.image_url}","${encodeURIComponent(JSON.stringify(chat))}")'>
+                <div class="chat-item">
+                    <div class="user-icon">
+                        <img src="${chat.image_url}" alt="user-logo">
+                    </div>
+
+                    <div class="chat-details">
+                        <div class="chat-headers">
+                            <span class="chat-name">${chat.full_name}</span>
+                            ${chat.unread_count > 0 ? `<span class="message-count">${chat.unread_count}</span>` : ""}
+                        </div>
+                                
+                        <div class="chat-base">
+                            <p class="message-preview"> ${truncateText(chat.last_message)} </p>
+                            <p class="message-time"> ${chat.last_msg_time} </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        const starthr = document.createElement("hr");u
+        chatContainer.prepend(starthr);
+        chatContainer.prepend(chatElement);
+    });
+}
+
+function fetchRecentChatDetails(uid, username){
+
+    $.ajax({
+        url: `/chats/api/recent-messages/${uid}/ref=${username}/`,
+        type: "GET",
+        datatype: "json",
+        success: function(response){
+            // console.log("Response : " + response);
+
+            let chats = response.message || [];
+            if (Array.isArray(chats)){
+                updateChatSection(chats);
+            }
+        },
+    });
+}
+
+// empty chatSocket is created
 let chatSocket = null;
 
+// on click on the user then open the main chat section in the right side of the page.
 function openChat(name, image_url, chat){
     const chatContainer = document.getElementById('chatContainer');
     chatContainer.innerHTML = `
@@ -92,6 +99,14 @@ function openChat(name, image_url, chat){
     let chat_data = JSON.parse(decodeURIComponent(chat)); 
     
     load_old_messages(chat_data)
+
+    // calling api to mark_as_read
+    let uuid = document.getElementById('uid').innerText;
+    let username = document.getElementById('username').innerText;
+
+    let markReadURL = `/chats/api/mark-as-read/sid=${chat_data.uid}/sref=${chat_data.username}/rid=${uuid}/rref=${username}/`;
+    
+    fetch(markReadURL);
 
     const inputField = document.getElementById('messageInput');
     const sendButton = document.getElementById('sendBtn');
@@ -182,7 +197,9 @@ function load_old_messages(chat){
                 const data = JSON.parse(event.data);
                 let datetime = `${data.date} ${data.time}`;
                 // console.log(data.is_send);
+                
                 DisplayMessage(data.message, datetime, data.is_send);
+                fetchRecentChatDetails(uuid, username);
             };
 
             chatSocket.onerror = function (e) {
@@ -257,4 +274,10 @@ function getCurrentDateTime(){
     const formateTime = `${hours}:${minute} ${ampm}`
 
     return `${formatDate} ${formateTime}`;
+}
+
+
+function truncateText(text){
+    if (!text) return '';
+    return text.length > 30 ? text.slice(0, 30) + '...' : text;
 }

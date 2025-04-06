@@ -17,6 +17,8 @@ from django.db.models import Count, Max, Q
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
+import requests
+from datetime import datetime
 # Create your views here.
 
 CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
@@ -35,7 +37,8 @@ def chat_page_sidebar(request, uid, username):
 
     chat_recent_key = f"CHAT-RECENT-KEY: {uid} - {username}"
     recent_message = cache.get(chat_recent_key)
-    
+
+    print(recent_message)
     # if get_recent_message:
     #     print(f"from cahce : {get_recent_message}")
     if not recent_message:
@@ -55,6 +58,7 @@ def chat_page_sidebar(request, uid, username):
                         'image_url' : chat.group.image.url if chat.group.image else '/media/images/user_logo/group_img.jpg',
                         'full_name' : chat.group.group_name,
                         'last_message' : last_message.message if last_message else '',
+                        'last_msg_date' : last_message.updated_at.strftime('%d-%m-%Y') if last_message else '',
                         'last_msg_time' : last_message.updated_at.strftime('%I:%M %p') if last_message else '',
                         'unread_count' : unread_count 
                     }
@@ -76,6 +80,7 @@ def chat_page_sidebar(request, uid, username):
                         'full_name': f"{chat_user.first_name} {chat_user.last_name}",
                         'username': chat_user.username,
                         'last_message': last_message.message if last_message else '',
+                        'last_msg_date' : last_message.updated_at.strftime('%d-%m-%Y') if last_message else '',
                         'last_msg_time': last_message.updated_at.strftime('%I:%M %p') if last_message else '',
                         'unread_count': unread_count
                     }
@@ -85,7 +90,12 @@ def chat_page_sidebar(request, uid, username):
         
         combined_list = recent_message_chat_list + recent_message_group_list
 
-        recent_message = sorted(combined_list, key=lambda x:x['last_msg_time'])
+        def get_datetime(chat):
+            dt_str = f"{chat['last_msg_date']} {chat['last_msg_time']}"
+            return datetime.strptime(dt_str, "%Y-%m-%d %I:%M %p")
+        
+
+        recent_message = sorted(combined_list, key=get_datetime, reverse=True)
         print(f"recent message : {recent_message}")
         cache.set(chat_recent_key, recent_message, timeout=DEFAULT_TIMEOUT)
     
@@ -98,7 +108,7 @@ def load_history(request, uid, username, rec_uid, rec_username):
     chat_cache_id = f"CHAT:CACHE:send-{uid}-{username} : rec:{rec_uid}-{rec_username}"
 
     list_messages = cache.get(chat_cache_id)
-
+    print(f"from cache data : ",list_messages)
     list_messages_data = {}
 
     if not list_messages:
@@ -159,6 +169,46 @@ def load_group_history(request, group_id, uid, username):
 
     return Response({'Messages' : list_messages})
 
+   
 
-        
+@api_view(['GET'])
+def mark_as_read(request, uid, username, rec_uid, rec_username):
+    chat_cache_id = f"CHAT:CACHE:send-{rec_uid}-{rec_username} : rec:{uid}-{username}"
+    chat_buffer_id = f"CHAT:BUFFER:send-{rec_uid}-{rec_username} : rec:{uid}-{username}"
+
+    get_cache_data = cache.get(chat_cache_id, {})
+    get_buffer_data = cache.get(chat_buffer_id, {})
+
+    if not get_cache_data:
+        load_message_api = f"http://127.0.0.1:8000/chats/api/load/one-2-one/chats/history/sid={uid}/sref={username}/rid={rec_uid}/rref={rec_username}/"
+        response = requests.get(load_message_api)
+        get_cache_data = cache.get(chat_cache_id, {})
+        get_buffer_data = cache.get(chat_buffer_id, {})
+
+    # print(f"Before update : {get_cache_data}\n")
+
+    updated_count = 0
+
+    new_cache_data = {}
+    for msg_id, msg_data in get_cache_data.items():
+        if msg_data['receiver_id'] == rec_username and not msg_data['is_read']:
+            msg_data['is_read'] = True
+            updated_count += 1
+        new_cache_data[msg_id] = msg_data
+
+    new_buffer_data = {}
+    for msg_id, msg_data in get_buffer_data.items():
+        if msg_data['receiver_id'] == rec_username and not msg_data['is_read']:
+            msg_data['is_read'] = True
+        new_buffer_data[msg_id] = msg_data
+    # print(f"After update : {get_cache_data}\n")
+    # print(f"After update : {new_cache_data}\n")
+
+    cache.set(chat_cache_id, new_cache_data, timeout=None)
+    cache.set(chat_buffer_id, new_buffer_data, timeout=None)
+
+    return Response({
+        'message': 'All messages marked as read.',
+        'total_updated': updated_count
+    })
 

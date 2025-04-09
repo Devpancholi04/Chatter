@@ -46,7 +46,7 @@ function updateChatSection(chats){
                 </div>
             </div>
         `;
-        const starthr = document.createElement("hr");u
+        const starthr = document.createElement("hr");
         chatContainer.prepend(starthr);
         chatContainer.prepend(chatElement);
     });

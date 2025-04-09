@@ -92,7 +92,12 @@ def chat_page_sidebar(request, uid, username):
 
         def get_datetime(chat):
             dt_str = f"{chat['last_msg_date']} {chat['last_msg_time']}"
-            return datetime.strptime(dt_str, "%Y-%m-%d %I:%M %p")
+            print(dt_str)
+            # return datetime.strptime(dt_str, "%Y-%m-%d %I:%M %p")
+            try:
+                return datetime.strptime(dt_str, "%Y-%m-%d %I:%M %p")
+            except ValueError:
+                return datetime.strptime(dt_str, "%d-%m-%Y %I:%M %p")
         
 
         recent_message = sorted(combined_list, key=get_datetime, reverse=True)

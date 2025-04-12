@@ -104,8 +104,8 @@ function openChat(name, image_url, chat){
     let uuid = document.getElementById('uid').innerText;
     let username = document.getElementById('username').innerText;
 
-    let markReadURL = `/chats/api/mark-as-read/sid=${chat_data.uid}/sref=${chat_data.username}/rid=${uuid}/rref=${username}/`;
-    
+    let markReadURL = `/chats/api/mark-as-read/sid=${uuid}/sref=${username}/rid=${chat_data.uid}/rref=${chat_data.username}/`;
+    console.log(markReadURL);
     fetch(markReadURL);
 
     const inputField = document.getElementById('messageInput');

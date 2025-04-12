@@ -106,7 +106,13 @@ function openChat(name, image_url, chat){
 
     let markReadURL = `/chats/api/mark-as-read/sid=${uuid}/sref=${username}/rid=${chat_data.uid}/rref=${chat_data.username}/`;
     console.log(markReadURL);
-    fetch(markReadURL);
+    fetch(markReadURL)
+        .then(response => {
+            return response.json();
+        })
+        .then(data => {
+            fetchRecentChatDetails(uuid, username);
+        })
 
     const inputField = document.getElementById('messageInput');
     const sendButton = document.getElementById('sendBtn');

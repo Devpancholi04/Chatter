@@ -62,5 +62,5 @@ class Message(models.Model):
         ordering = ['-updated_at']
     
     def __str__(self):
-        name = [f"chat from {self.sender} to {self.receiver}" if self.is_group_message == False else f"{self.sender} in {self.group.group_name} - {self.receiver}"]
+        name = [f"{self.message_id} in chat from {self.sender} to {self.receiver}" if self.is_group_message == False else f"{self.sender} in {self.group.group_name} - {self.receiver}"]
         return name[0]

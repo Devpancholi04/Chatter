@@ -53,7 +53,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
         data = json.loads(text_data)
-        # print(data)
         message_time = datetime.now()
         
         sender_user, receiver_user = await self.get_user()

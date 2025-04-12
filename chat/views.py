@@ -33,14 +33,11 @@ def chat_page(request, uid, username):
 @api_view(['GET'])
 def chat_page_sidebar(request, uid, username):
     user = get_object_or_404(CustomUser, uid=uid, username=username)
-    # print(f"User : {user.username}")
+
 
     chat_recent_key = f"CHAT-RECENT-KEY: {uid} - {username}"
     recent_message = cache.get(chat_recent_key)
 
-    # print(f"recentdatarecent_message)
-    # if get_recent_message:
-    print(f"from cahce : {recent_message}")
     if not recent_message:
         chats = Message.objects.filter(Q(sender=user) | Q(receiver=user) | Q(group__members = user))
     
@@ -92,8 +89,6 @@ def chat_page_sidebar(request, uid, username):
 
         def get_datetime(chat):
             dt_str = f"{chat['last_msg_date']} {chat['last_msg_time']}"
-            print(dt_str)
-            # return datetime.strptime(dt_str, "%Y-%m-%d %I:%M %p")
             try:
                 return datetime.strptime(dt_str, "%Y-%m-%d %I:%M %p")
             except ValueError:
@@ -101,7 +96,6 @@ def chat_page_sidebar(request, uid, username):
         
 
         recent_message = sorted(combined_list, key=get_datetime, reverse=True)
-        print(f"recent message : {recent_message}")
         cache.set(chat_recent_key, recent_message, timeout=DEFAULT_TIMEOUT)
     
     return Response({'message': recent_message})
@@ -113,7 +107,7 @@ def load_history(request, uid, username, rec_uid, rec_username):
     chat_cache_id = f"CHAT:CACHE:send-{uid}-{username} : rec:{rec_uid}-{rec_username}"
 
     list_messages = cache.get(chat_cache_id)
-    print(f"from cache data : ",list_messages)
+    
     list_messages_data = {}
 
     if not list_messages:
@@ -141,7 +135,6 @@ def load_history(request, uid, username, rec_uid, rec_username):
 
 @api_view(['GET'])
 def load_group_history(request, group_id, uid, username):
-    print(username)
     group_chat_history_id = f"GROUP-CHAT-CACHE:{group_id} - {uid}"
     list_messages = cache.get(group_chat_history_id)
 
@@ -197,16 +190,11 @@ def mark_as_read(request, uid, username, rec_uid, rec_username):
         get_cache_data = cache.get(chat_cache_id, {})
         get_buffer_data = cache.get(chat_buffer_id, {})
 
-    # print(f"\nBefore Cache update : {get_cache_data}\n")
-    # print(f"Before Buffer update : {get_buffer_data}\n")
-
     updated_count = 0
 
     new_cache_data = {}
     for msg_id, msg_data in get_cache_data.items():
         if msg_data['receiver_id'] ==username and msg_data['is_read'] == False:
-            print(msg_data['receiver_id'])
-            print(msg_data['is_read'])
             msg_data['is_read'] = True
             updated_count += 1
         new_cache_data[msg_id] = msg_data
@@ -225,8 +213,6 @@ def mark_as_read(request, uid, username, rec_uid, rec_username):
         if msg_data.get('username') == username and msg_data.get('unread_count',0) > 0:
             msg_data['unread_count'] = 0
 
-    # print(f"After cache update : {new_cache_data}\n")
-    # print(f"After buffer update : {new_buffer_data}\n")
 
     cache.set(chat_cache_id, new_cache_data, timeout=None)
     cache.set(chat_buffer_id, new_buffer_data, timeout=None)

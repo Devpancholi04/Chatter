@@ -1,23 +1,15 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
-import re
-import asyncio
+
 import json
-from django.contrib.auth.models import AnonymousUser
-# from .utils import get_recent_chats
-from asgiref.sync import sync_to_async
-from .models import Message
+
 from account.models import CustomUser
 from channels.db import database_sync_to_async
-from django.core.cache import cache
+
 from base.generate import generate_ids
 from datetime import datetime
 
 from django.core.cache import cache
-from django.core.cache.backends.base import DEFAULT_TIMEOUT
-from django.conf import settings
 
-
-CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
 
 class ChatConsumer(AsyncWebsocketConsumer):
 
@@ -79,7 +71,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             'time' : message_time.strftime("%I:%M %p"),
         }
 
-        # print(sender_user.uid)
+       
         cache_key = f"CHAT:CACHE:send-{sender_user.uid}-{sender_user.username} : rec:{receiver_user.uid}-{receiver_user.username}"
         cache_key1 = f"CHAT:CACHE:send-{receiver_user.uid}-{receiver_user.username} : rec:{sender_user.uid}-{sender_user.username}"
 
@@ -107,12 +99,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         get_recent_message_send = cache.get(get_recent_cache_send, [])
         get_recent_message_rece = cache.get(get_recent_cache_rec, [])
 
-        # print(f"recent message cache : {get_recent_message_send}\n")
-        # print(f"recent message cache for receiver : {get_recent_message_rece}\n")
-
-        # filtered_msg_send = [msg for msg in get_recent_message_send if 'username' in msg]
-        # filtered_msg_rece = [msg for msg in get_recent_message_rece if 'username' in msg]
-
+        
         for recent_msg in get_recent_message_send:
             if recent_msg.get('username') == receiver_user.username:
                 recent_msg['last_message'] = data['message']
@@ -127,9 +114,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 recent_msg['last_msg_time'] = message_time.strftime("%I:%M %p")
                 recent_msg['unread_count'] = recent_msg['unread_count'] + 1
 
-        # print(f"filtered data for send user : {get_recent_message_send}\n")
-        # print(f"filtered data for receiver user : {get_recent_message_rece}\n")
-
+        
         cache.set(cache_key, get_cache, timeout=None)
         cache.set(cache_key1, get_cache1, timeout=None)
 
@@ -138,8 +123,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         cache.set(get_recent_cache_send, get_recent_message_send, timeout=None)
         cache.set(get_recent_cache_rec, get_recent_message_rece, timeout=None)
-        # print(f"get_cache_data : {get_cache}\n")
-        # print(f"get_buffer_data : {get_buffer}\n")
+        
 
         
         await self.channel_layer.group_send(
@@ -157,7 +141,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def chat_message(self, event):
         current_username = self.sender_username 
         is_send = (event['sender_id'] == current_username)
-        # print(is_send)
+    
         await self.send(text_data=json.dumps({
             "message_id": event['message_id'],
             "sender_id": event['sender_id'],

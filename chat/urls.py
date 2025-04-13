@@ -10,4 +10,5 @@ urlpatterns = [
     path('api/recent-messages/<str:uid>/ref=<str:username>/', views.chat_page_sidebar, name='sidebar'),
 
     path('api/mark-as-read/sid=<str:uid>/sref=<str:username>/rid=<str:rec_uid>/rref=<str:rec_username>/', views.mark_as_read, name='make_as_read'),
+    path('api/group/chats/mark-as-read/gid=<str:group_id>/uid=<str:uid>/username=<str:username>/', views.group_message_mark_as_read, name="group_message_mark_as_read"),
 ]   

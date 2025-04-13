@@ -38,6 +38,14 @@ def chat_page_sidebar(request, uid, username):
     chat_recent_key = f"CHAT-RECENT-KEY: {uid} - {username}"
     recent_message = cache.get(chat_recent_key)
 
+    
+    def get_datetime(chat):
+        dt_str = f"{chat['last_msg_date']} {chat['last_msg_time']}"
+        try:
+            return datetime.strptime(dt_str, "%Y-%m-%d %I:%M %p")
+        except ValueError:
+            return datetime.strptime(dt_str, "%d-%m-%Y %I:%M %p")
+
     if not recent_message:
         chats = Message.objects.filter(Q(sender=user) | Q(receiver=user) | Q(group__members = user))
     
@@ -86,18 +94,14 @@ def chat_page_sidebar(request, uid, username):
         recent_message_group_list = list(groups.values())
         
         combined_list = recent_message_chat_list + recent_message_group_list
-
-        def get_datetime(chat):
-            dt_str = f"{chat['last_msg_date']} {chat['last_msg_time']}"
-            try:
-                return datetime.strptime(dt_str, "%Y-%m-%d %I:%M %p")
-            except ValueError:
-                return datetime.strptime(dt_str, "%d-%m-%Y %I:%M %p")
         
 
         recent_message = sorted(combined_list, key=get_datetime, reverse=True)
         cache.set(chat_recent_key, recent_message, timeout=DEFAULT_TIMEOUT)
+    else:
+        recent_message = sorted(recent_message, key=get_datetime, reverse=False)
     
+    print(f"recent_messages : {recent_message}")
     return Response({'message': recent_message})
 
 
@@ -135,8 +139,16 @@ def load_history(request, uid, username, rec_uid, rec_username):
 
 @api_view(['GET'])
 def load_group_history(request, group_id, uid, username):
-    group_chat_history_id = f"GROUP-CHAT-CACHE:{group_id} - {uid}"
+    group_chat_history_id = f"GROUP-CHAT-CACHE:{group_id}"
     list_messages = cache.get(group_chat_history_id)
+
+    if list_messages:
+        for item in list_messages:
+            if item['sender_id'] == username:
+                item['is_send'] = True
+            else:
+                item['is_send'] = False
+
 
     if not list_messages:
         try:
@@ -151,12 +163,13 @@ def load_group_history(request, group_id, uid, username):
                 'message_id' : msg.message_id,
                 'sender_id' : msg.sender.username,
                 'received_id' : {
-                    'all_member_list' : [member.username for member in get_group.members.all()],
+                    'all_member_list' : [member.username for member in get_group.members.all() if member.username != username],
                 },
                 'sender_name' : f"{msg.sender.first_name} {msg.sender.last_name}",
                 'message' : msg.message,    
                 'is_send' : True if msg.sender.username == username else False,
                 'is_read' : msg.is_read,
+                'readed_by' : [],
                 'date' : msg.updated_at.strftime("%d-%m-%Y"),
                 'time' : msg.updated_at.strftime("%I:%M %p"),
             }
@@ -164,6 +177,8 @@ def load_group_history(request, group_id, uid, username):
         ]
             
         cache.set(group_chat_history_id, list_messages, timeout=CACHE_TTL)
+
+    print(f"list_message : {list_messages}")
 
     return Response({'Messages' : list_messages})
 
@@ -225,3 +240,45 @@ def mark_as_read(request, uid, username, rec_uid, rec_username):
         'total_updated': updated_count
     })
 
+
+@api_view(['GET'])
+def group_message_mark_as_read(request, group_id, uid, username):
+    group_cache_key = f"GROUP-CHAT-CACHE:{group_id}"
+    group_buffer_key = f"GROUP-CHAT-BUFFER:{group_id}"
+    
+    get_group_cache = cache.get(group_cache_key, [])
+    get_group_buffer = cache.get(group_buffer_key, [])
+
+    
+    # print(f"get_group_cache_before_update : {get_group_cache}\n")
+    # print(f"get_group_buffer_before_update : {get_group_buffer}\n")
+
+
+    for chat in get_group_cache:
+        if username in chat['received_id']['all_member_list']:
+            chat['readed_by'].append(username)
+
+    for chat in get_group_buffer:
+        if username in chat['received_id']['all_member_list']:
+            chat['readed_by'].append(username)
+
+    # print(f"get_group_cache_after_update : {get_group_cache}\n")
+    # print(f"get_group_buffer_after_update : {get_group_buffer}\n")
+
+    cache.set(group_cache_key, get_group_cache, timeout=None)
+    cache.set(group_buffer_key, get_group_buffer, timeout=None)
+
+
+    chat_recent_key = f"CHAT-RECENT-KEY: {uid} - {username}"
+    recent_message = cache.get(chat_recent_key)
+
+    for chats in recent_message:
+        if group_id:
+            if group_id == group_id:
+                chats['unread_count'] = 0
+    
+    cache.set(chat_recent_key, recent_message, timeout=None)
+
+    return Response({
+        "message" : "All Message marked as read",
+    })

@@ -1,30 +1,30 @@
 // here called the ajax for fetching recent chats 
-$(document).ready(function() {
+$(document).ready(function () {
     let uuid = document.getElementById('uid').innerText;
     let username = document.getElementById('username').innerText;
 
     // after updating the chats on the sidebar ui then this will be used for updating the ui when new message received
-    
+
 
     // fetch recent function is called
     fetchRecentChatDetails(uuid, username);
 
     // here set that this fetch Recent message function is called after evert 1 minute
-    setInterval(function(){
+    setInterval(function () {
         fetchRecentChatDetails(uuid, username)
     }, 60000);
 
 });
 
 // after fetching the recent chats update on the ui
-function updateChatSection(chats){
+function updateChatSection(chats) {
     const chatContainer = document.getElementById("list-contacts")
     chatContainer.innerHTML = "";
 
     chats.forEach(chat => {
         const chatElement = document.createElement("li");
         chatElement.classList.add("contact");
-        
+
         chatElement.innerHTML = `
             <div class="chatting" onclick='openChat("${chat.full_name}", "${chat.image_url}","${encodeURIComponent(JSON.stringify(chat))}")'>
                 <div class="chat-item">
@@ -52,17 +52,17 @@ function updateChatSection(chats){
     });
 }
 
-function fetchRecentChatDetails(uid, username){
+function fetchRecentChatDetails(uid, username) {
 
     $.ajax({
         url: `/chats/api/recent-messages/${uid}/ref=${username}/`,
         type: "GET",
         datatype: "json",
-        success: function(response){
+        success: function (response) {
             // console.log("Response : " + response);
 
             let chats = response.message || [];
-            if (Array.isArray(chats)){
+            if (Array.isArray(chats)) {
                 updateChatSection(chats);
             }
         },
@@ -73,7 +73,7 @@ function fetchRecentChatDetails(uid, username){
 let chatSocket = null;
 
 // on click on the user then open the main chat section in the right side of the page.
-function openChat(name, image_url, chat){
+function openChat(name, image_url, chat) {
     const chatContainer = document.getElementById('chatContainer');
     chatContainer.innerHTML = `
         <div class="chat-box">
@@ -96,24 +96,39 @@ function openChat(name, image_url, chat){
 
     document.querySelector('.chat-box').style.display = 'flex';
 
-    let chat_data = JSON.parse(decodeURIComponent(chat)); 
-    
-    load_old_messages(chat_data)
+    let chat_data = JSON.parse(decodeURIComponent(chat));
+    console.log(chat_data);
 
-    // calling api to mark_as_read
     let uuid = document.getElementById('uid').innerText;
     let username = document.getElementById('username').innerText;
 
-    let markReadURL = `/chats/api/mark-as-read/sid=${uuid}/sref=${username}/rid=${chat_data.uid}/rref=${chat_data.username}/`;
-    console.log(markReadURL);
-    fetch(markReadURL)
-        .then(response => {
-            return response.json();
-        })
-        .then(data => {
-            fetchRecentChatDetails(uuid, username);
-        })
+    if (chat_data.group_id){
+        load_group_old_messages(chat_data);
 
+        let markGroupReadURL = `/chats/api/group/chats/mark-as-read/gid=${chat_data.group_id}/uid=${uuid}/username=${username}/`;
+        fetch(markGroupReadURL)
+            .then(response => {
+                return response.json();
+            })
+            .then(data => {
+                fetchRecentChatDetails(uuid, username);
+            })
+    } else{
+        load_old_messages(chat_data);
+
+        let markReadURL = `/chats/api/mark-as-read/sid=${uuid}/sref=${username}/rid=${chat_data.uid}/rref=${chat_data.username}/`;
+        console.log(markReadURL);
+        fetch(markReadURL)
+            .then(response => {
+                return response.json();
+            })
+            .then(data => {
+                fetchRecentChatDetails(uuid, username);
+            })
+    }
+
+    // calling api to mark_as_read
+    
     const inputField = document.getElementById('messageInput');
     const sendButton = document.getElementById('sendBtn');
 
@@ -121,22 +136,22 @@ function openChat(name, image_url, chat){
 
     sendButton.addEventListener('click', sendMessage);
 
-    inputField.addEventListener('keypress', function (event){
-        if (event.key === 'Enter'){
+    inputField.addEventListener('keypress', function (event) {
+        if (event.key === 'Enter') {
             event.preventDefault();
             sendMessage();
         }
     });
 }
 
-function sendMessage(){
+function sendMessage() {
     const input = document.getElementById('messageInput');
 
-    if (input.value.trim() !== '' && chatSocket){
+    if (input.value.trim() !== '' && chatSocket) {
         const messageData = JSON.stringify({
-            'message' : input.value,
+            'message': input.value,
         });
-        
+
         const getTime = getCurrentDateTime();
 
         chatSocket.send(messageData);
@@ -146,20 +161,20 @@ function sendMessage(){
 }
 
 
-function CloseBtn(){
-    if (chatSocket){
+function CloseBtn() {
+    if (chatSocket) {
         chatSocket.close();
         chatSocket = null;
     }
     document.getElementById('chatContainer').innerHTML = '';
 }
 
-function load_old_messages(chat){
+function load_group_old_messages(chat) {
     let uuid = document.getElementById('uid').innerText;
-    let username = document.getElementById('username').innerText;  
-    
-    if (chat.group_id){
-        let groupMessageUrl = `/chats/api/load/group/chats/history/gid=${chat.group_id}/ref=${uuid}/refu=${username}`;
+    let username = document.getElementById('username').innerText;
+    console.log(chat.group_id);
+    if (chat.group_id) {
+        let groupMessageUrl = `/chats/api/load/group/chats/history/gid=${chat.group_id}/ref=${uuid}/refu=${username}/`;
         fetch(groupMessageUrl)
             .then(response => response.json())
             .then(data => {
@@ -171,56 +186,83 @@ function load_old_messages(chat){
                     DisplayGroupMessages(msg.message, msg.sender_name, datetime, isSender);
                 });
             })
-    } else{
+        const groupName = `${chat.full_name}`.toLowerCase().replace(/\s+/g, '-');
 
-        let directMessageUrl = `/chats/api/load/one-2-one/chats/history/sid=${uuid}/sref=${username}/rid=${chat.uid}/rref=${chat.username}/`
-        fetch(directMessageUrl)
-            .then(response => response.json())
-            .then(data => {
-                // console.log('One to one chat Message: ', data.Messages);
-                
-                let messageArray = Object.values(data.Messages);
-                
-                messageArray.forEach(msg => {
-                    DisplayMessage(msg.message,`${msg.date} ${msg.time}` ,msg.is_send);
-                });
+        chatSocket = new WebSocket(`ws://${window.location.host}/ws/group/chats/${chat.group_id}/${groupName}/`);
+        // console.log(chatSocket);
+        chatSocket.onopen = function () {
+            console.log("✅ group WebSocket Connected connection opened.");
+        }
 
-            })
-            .catch(error => console.error('error while fetching data ', error));
-
-            chatSocket = new WebSocket(`ws://${window.location.host}/ws/chats/${uuid}/${username}/${chat.username}/`);
-
-            chatSocket.onopen = function(){
-                console.log("✅ WebSocket connection opened.");
-            }
-
-            chatSocket.onclose = function () {
-                console.warn("⚠️ WebSocket connection closed.");
-            };
+        chatSocket.onclose = function () {
+            console.warn("⚠️ WebSocket connection closed.");
+        };
 
 
-            chatSocket.onmessage = function(event){
-                const data = JSON.parse(event.data);
-                let datetime = `${data.date} ${data.time}`;
-                // console.log(data.is_send);
-                
-                DisplayMessage(data.message, datetime, data.is_send);
-                fetchRecentChatDetails(uuid, username);
-            };
+        chatSocket.onmessage = function (event) {
+            const data = JSON.parse(event.data);
+            let datetime = `${data.date} ${data.time}`;
 
-            chatSocket.onerror = function (e) {
-                console.error("❌ WebSocket error:", e);
-            };
+            DisplayGroupMessages(data.message, data.sender_name, datetime, data.is_send);
+            fetchRecentChatDetails(uuid, username);
+        };
+
+        chatSocket.onerror = function (e) {
+            console.error("❌ WebSocket error:", e);
+        };
     }
 }
 
-function DisplayMessage(message,time, isSender){
+function load_old_messages(chat) {
+    let uuid = document.getElementById('uid').innerText;
+    let username = document.getElementById('username').innerText;
+
+    let directMessageUrl = `/chats/api/load/one-2-one/chats/history/sid=${uuid}/sref=${username}/rid=${chat.uid}/rref=${chat.username}/`
+    fetch(directMessageUrl)
+        .then(response => response.json())
+        .then(data => {
+                // console.log('One to one chat Message: ', data.Messages);
+
+            let messageArray = Object.values(data.Messages);
+
+            messageArray.forEach(msg => {
+                DisplayMessage(msg.message, `${msg.date} ${msg.time}`, msg.is_send);
+            });
+        })
+        .catch(error => console.error('error while fetching data ', error));
+
+    chatSocket = new WebSocket(`ws://${window.location.host}/ws/chats/${uuid}/${username}/${chat.username}/`);
+
+    chatSocket.onopen = function () {
+        console.log("✅ WebSocket connection opened.");
+    }
+
+    chatSocket.onclose = function () {
+        console.warn("⚠️ WebSocket connection closed.");
+    };
+
+
+    chatSocket.onmessage = function (event) {
+        const data = JSON.parse(event.data);
+        let datetime = `${data.date} ${data.time}`;
+            // console.log(data.is_send);
+
+        DisplayMessage(data.message, datetime, data.is_send);
+        fetchRecentChatDetails(uuid, username);
+    };
+
+    chatSocket.onerror = function (e) {
+        console.error("❌ WebSocket error:", e);
+    };
+}
+
+function DisplayMessage(message, time, isSender) {
     const messageContainer = document.getElementById("messages");
 
     const messageElement = document.createElement("div");
     messageContainer.classList.add('message');
 
-    if (isSender){
+    if (isSender) {
         messageElement.classList.add("sent");
     } else {
         messageElement.classList.add("received");
@@ -236,13 +278,13 @@ function DisplayMessage(message,time, isSender){
 
 }
 
-function DisplayGroupMessages(message, senderName, time, isSender){
+function DisplayGroupMessages(message, senderName, time, isSender) {
     const messageContainer = document.getElementById("messages");
 
     const messageElement = document.createElement("div");
     messageContainer.classList.add('message');
 
-    if (isSender){
+    if (isSender) {
         messageElement.classList.add("sent");
     } else {
         messageElement.classList.add("received");
@@ -260,7 +302,7 @@ function DisplayGroupMessages(message, senderName, time, isSender){
 
 
 
-function getCurrentDateTime(){
+function getCurrentDateTime() {
     const now = new Date();
 
     const date = now.getDate();
@@ -283,7 +325,7 @@ function getCurrentDateTime(){
 }
 
 
-function truncateText(text){
+function truncateText(text) {
     if (!text) return '';
     return text.length > 30 ? text.slice(0, 30) + '...' : text;
 }

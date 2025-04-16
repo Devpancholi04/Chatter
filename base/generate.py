@@ -18,7 +18,15 @@ class generate_ids:
     def gen_group_id(self, name):
         group_id = f"Group-{name}{random.randint(10000,99999)}"
         return slugify(group_id)
-
+    
+    def gen_community_id(self, name):
+        Community_id = f"Community-{name}{random.randint(10000,99999)}"
+        return slugify(Community_id)
+    
+    def gen_community_message_id(self):
+        mess_id = f"com-msg{''.join(random.choice(string.digits) for _ in range(6))}"
+        return mess_id
+    
 if __name__ == "__main__":
     a = generate_ids()
     a.gen_user_id('dev')

@@ -101,7 +101,7 @@ def chat_page_sidebar(request, uid, username):
     else:
         recent_message = sorted(recent_message, key=get_datetime, reverse=False)
     
-    print(f"recent_messages : {recent_message}")
+    # print(f"recent_messages : {recent_message}")
     return Response({'message': recent_message})
 
 
@@ -178,7 +178,7 @@ def load_group_history(request, group_id, uid, username):
             
         cache.set(group_chat_history_id, list_messages, timeout=CACHE_TTL)
 
-    print(f"list_message : {list_messages}")
+    # print(f"list_message : {list_messages}")
 
     return Response({'Messages' : list_messages})
 

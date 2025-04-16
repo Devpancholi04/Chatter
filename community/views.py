@@ -62,7 +62,7 @@ def community_page_sidebar(request, uid, username):
 
             community_data.append({
                 'community_id' : community.community_id,
-                'image_url' : community.image.url if community.image else '/media/iamges/user_logo/group_img.jpg',
+                'image_url' : community.image.url if community.image else '/media/images/user_logo/group_img.jpg',
                 'full_name' : community.community_name,
                 'last_message' : last_message.message if last_message else '',
                 'last_msg_date' : last_message.updated_at.strftime("%d-%m-%Y") if last_message else '',
@@ -78,3 +78,15 @@ def community_page_sidebar(request, uid, username):
         # print(f"data from cache  : {recent_message}\n")
 
     return Response({'message' : recent_message})
+
+
+@api_view(['GET'])
+def load_community_messages(request, cid, uid, username):
+
+    return Response({'message' : []})
+
+
+@api_view(['GET'])
+def community_message_marks_as_read(request, cid, uid, username):
+
+    return Response({'message' : []})

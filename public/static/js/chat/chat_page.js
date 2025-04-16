@@ -1,15 +1,9 @@
-// here called the ajax for fetching recent chats 
 $(document).ready(function () {
     let uuid = document.getElementById('uid').innerText;
     let username = document.getElementById('username').innerText;
 
-    // after updating the chats on the sidebar ui then this will be used for updating the ui when new message received
-
-
-    // fetch recent function is called
     fetchRecentChatDetails(uuid, username);
 
-    // here set that this fetch Recent message function is called after evert 1 minute
     setInterval(function () {
         fetchRecentChatDetails(uuid, username)
     }, 60000);

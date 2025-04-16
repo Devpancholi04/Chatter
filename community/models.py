@@ -18,7 +18,7 @@ class Community(models.Model):
     
     def save(self, *args, **kwargs):
         if not self.community_id:
-            self.community_id = self.gen.gen_community_id()
+            self.community_id = self.gen.gen_community_id(self.community_name)
         super().save(*args, **kwargs)
 
     def __str__(self):

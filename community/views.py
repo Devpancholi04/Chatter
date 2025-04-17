@@ -83,10 +83,92 @@ def community_page_sidebar(request, uid, username):
 @api_view(['GET'])
 def load_community_messages(request, cid, uid, username):
 
-    return Response({'message' : []})
+    community_chat_history_key = f"COMMUNITY-CHAT-CACHE:{cid}"
+    list_messages = cache.get(community_chat_history_key, [])
+
+    if list_messages:
+        for item in list_messages:
+            item['is_send'] = item['sender_id'] == username
+
+    else:
+        try:
+            get_community = Community.objects.get(community_id = cid)
+        except Community.DoesNotExist:
+            return Response({'error' : "Community Does not Exists"}, status=404)
+        
+        messages = CommunityMessage.objects.filter(community = get_community).order_by('updated_at')
+        list_messages = []
+
+        for msg in messages:
+            read_receiver = CommunityMessageReadReceipent.objects.filter(message=msg, is_read = True).exclude(member__username = username)
+            readby = [receiver.member.username for receiver in read_receiver]
+
+            list_messages.append({
+                'message_id' : msg.message_id,
+                'community_id' : cid,
+                'community_name' : msg.community.community_name,
+                'sender_id' : msg.sender.username,
+                'received_id' : {
+                    'all_message_list' : [
+                        member.member.username for member in get_community.community_members.all()
+                        if member.member and member.member.username != username
+                    ],
+                },
+                'sender_name' : f"{msg.sender.first_name} {msg.sender.last_name}",
+                'message' : msg.message,
+                'is_send' : True if msg.sender.username == username else False,
+                'is_read' : CommunityMessageReadReceipent.objects.filter(message=msg, member__username = username, is_read=True).exists(),
+                'readed_by' : readby,
+                'date' : msg.updated_at.strftime("%d-%m-%Y"),
+                'time' : msg.updated_at.strftime("%I:%M %p"),
+            })
+
+        cache.set(community_chat_history_key, list_messages, timeout=None)
+
+    return Response({'message' : list_messages})
 
 
 @api_view(['GET'])
 def community_message_marks_as_read(request, cid, uid, username):
 
-    return Response({'message' : []})
+    community_cache_key = f"COMMUNITY-CHAT-CACHE:{cid}"
+    community_buffer_key = f"COMMUNITY-CHAT-BUFFER:{cid}"
+
+    get_community_cache = cache.get(community_cache_key, [])
+    get_community_buffer = cache.get(community_buffer_key, [])
+
+    newly_read_msgs = []
+
+    for chat in get_community_cache:
+        # if username in chat['received_id']['all_member_list'] and username not in chat['readed_by']:
+        if(
+            isinstance(chat.get('received_id'), dict) and
+            username in chat['received_id'].get('all_member_list',[]) and
+            username not in chat.get('readed_by', [])
+        ):
+            chat['readed_by'].append(username)
+            newly_read_msgs.append(chat)
+
+    for chat in get_community_buffer:
+        if(
+            isinstance(chat.get('received_id'), dict) and
+            username in chat['received_id'].get('all_member_list',[]) and
+            username not in chat.get('readed_by', [])
+        ):
+            chat['readed_by'].append(username)
+            newly_read_msgs.append(chat)
+        # if username in chat['received_id']['all_member_list'] and username not in chat['readed_by']:
+
+    cache.set(community_cache_key, get_community_cache, timeout=None)
+    cache.set(community_buffer_key, get_community_buffer, timeout=None)
+
+    community_recent_key = f"COMMUNITY-RECENT-KEY : {uid} - {username}"
+    recent_message = cache.get(community_recent_key, [])
+
+    for chats in recent_message:
+        if chats.get('community_id') == cid:
+            chats['unread_count'] = 0
+    
+    cache.set(community_recent_key, recent_message, timeout=None)
+
+    return Response({"message": "All Community Messages marked as read",})

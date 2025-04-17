@@ -64,6 +64,9 @@ function truncateText(text) {
     return text.length > 30 ? text.slice(0, 30) + '...' : text;
 }
 
+
+let chatSocket = null;
+
 function openChat(name, image_url, chat){
     const communityContainer = document.getElementById('chatContainer');
     communityContainer.innerHTML = `
@@ -88,11 +91,24 @@ function openChat(name, image_url, chat){
     document.querySelector('.chat-box').style.display = 'flex';
 
     let chat_data = JSON.parse(decodeURIComponent(chat));
+    // console.log(chat_data);
 
     let uuid = document.getElementById('uid').innerText;
     let username = document.getElementById('username').innerText;
 
-    // load_community_old_messages(chat_data);
+    if (chat_data.community_id){
+        load_community_old_messages(chat_data);
+
+        let markCommunityReadUrl = `/community/api/mark-as-read/messages/cid=${chat_data.community_id}/uid=${uuid}/username=${username}/`;
+        fetch(markCommunityReadUrl)
+            .then(response =>{
+                return response.json();
+            })
+            .then(data =>{
+                fetchRecentCommunitiesDetails(uuid, username);
+            })
+    }
+
 
     const inputField = document.getElementById('messageInput');
     const sendButton = document.getElementById('sendBtn');
@@ -112,26 +128,92 @@ function openChat(name, image_url, chat){
 function sendMessage(){
     const input = document.getElementById('messageInput');
 
-    if (input.value.trim() !== '') { //&& chatSocket
+    if (input.value.trim() !== '' && chatSocket) {
         const messageData = JSON.stringify({
             'message': input.value,
         });
 
         // chat socket send function will be called here
+        chatSocket.send(messageData);
         input.value = '';
     }
 }
 
 function CloseBtn(){
-    // if (chatSocket) {
-    //     chatSocket.close();
-    //     chatSocket = null;
-    // }
+    if (chatSocket) {
+        chatSocket.close();
+        chatSocket = null;
+    }
 
     document.getElementById('chatContainer').innerHTML = '';
 }
 
-function load_community_old_messages(message){
+function load_community_old_messages(chat){
     let uuid = document.getElementById('uid').innerText;
     let username = document.getElementById('username').innerText;
+    // console.log(chat.community_id);
+    // console.log(chat.full_name);
+
+    if (chat.community_id){
+        let communityMessageUrl = `/community/api/load/message/history/cid=${chat.community_id}/ref=${uuid}/refu=${username}/`;
+        // console.log(communityMessageUrl);
+        fetch(communityMessageUrl)
+            .then(response => response.json())
+            .then(data => {
+                // console.log(data);
+                let messageArray = Object.values(data.message);
+                // console.log(data.message);
+                messageArray.forEach(msg => {   
+                    let isSender = msg.is_send;
+                    let datetime = `${msg.date} ${msg.time}`;
+                    DisplayCommunityMessages(msg.message, msg.sender_name, datetime, isSender);
+                });
+            })
+        
+            const community_name = `${chat.full_name}`.toLowerCase().replace(/\s+/g, '-');
+            console.log(`ws://${window.location.host}/ws/community/chats/${chat.community_id}/${community_name}/`);
+            chatSocket = new WebSocket(`ws://${window.location.host}/ws/community/chats/${chat.community_id}/${community_name}/`);
+
+            chatSocket.onopen = function () {
+                console.log("✅ community WebSocket Connected connection opened.")
+            }
+
+            chatSocket.onclose = function () {
+                console.warn("⚠️ WebSocket connection closed.");
+            };
+
+            chatSocket.onmessage = function (event) {
+                const data = JSON.parse(event.data);
+                let datetime = `${data.date} ${data.time}`;
+    
+                DisplayCommunityMessages(data.message, data.sender_name, datetime, data.is_send);
+                fetchRecentCommunitiesDetails(uuid, username);
+            };
+
+            chatSocket.onerror = function (e) {
+                console.error("❌ WebSocket error:", e);
+            };
+    }       
+}
+
+function DisplayCommunityMessages(message, senderName, time, isSender){
+    const messageContainer = document.getElementById("messages");
+
+    const messageElement = document.createElement("div");
+    messageContainer.classList.add('message');
+
+    if (isSender) {
+        messageElement.classList.add("sent");
+    } else {
+        messageElement.classList.add("received");
+    }
+
+    messageElement.innerHTML = `
+        <p class="sender-name">${senderName}</p>
+        <p class="message-text">${message}</p>
+        <span class="message-time">${time}</span>
+    `;
+
+    messageContainer.appendChild(messageElement);
+    messageContainer.scrollTop = messageContainer.scrollHeight;
 }

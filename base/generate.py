@@ -27,6 +27,10 @@ class generate_ids:
         mess_id = f"com-msg{''.join(random.choice(string.digits) for _ in range(6))}"
         return mess_id
     
+    def gen_ai_chat_message_id(self):
+        mess_id = f"AI-msg{''.join(random.choice(string.digits) for _ in range(10))}"
+        return mess_id
+    
 if __name__ == "__main__":
     a = generate_ids()
     a.gen_user_id('dev')

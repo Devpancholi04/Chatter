@@ -15,6 +15,7 @@ class AIChat(models.Model):
         ('DeepSeek-Free', 'deepseek-r1-distill-llama-70b:free'),
         ('QWEN', 'QWEN-32b:free'),
     ])
+    api_used = models.CharField(max_length=200)
     user_message = models.TextField()
     ai_response = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)

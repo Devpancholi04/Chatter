@@ -39,9 +39,9 @@ class AIConsumer(AsyncWebsocketConsumer):
 
     api = [api1, api2]
     ai_model = {
-        # 'general' : ('deepseek/deepseek-r1', 'deepseek-paid-version'),
-        'general' : ('deepseek/deepseek-r1-zero:free', 'deepseek-free-version'),
-        'programming' : ('qwen/qwq-32b:free','Qwen-free-version')
+        # 'general' : ('deepseek/deepseek-r1', 'DEEPSEEK-R1:paid'),
+        'general' : ('deepseek/deepseek-r1-zero:free', 'deepseek-r1-distill-llama-70b:free'),
+        'programming' : ('qwen/qwq-32b:free','QWEN-32b:free')
     }
 
     programming_keyword = [
@@ -101,6 +101,24 @@ class AIConsumer(AsyncWebsocketConsumer):
                     'message': full_response,
                     'streaming' : True
                 }))
+
+                ai_chat_id = self.gen.gen_ai_chat_message_id()
+                user = await database_sync_to_async(
+                lambda: CustomUser.objects.get(username=self.sender_user.username)
+                )()
+
+                if user:
+                    await database_sync_to_async(
+                        lambda: AIChat.objects.create(
+                            ai_message_id=ai_chat_id,
+                            user=user,
+                            ai_model=model_name,
+                            api_used=key,
+                            user_message=text,
+                            ai_response=full_response
+                        )
+                    )()
+
                 return
             except Exception as e:
                 print(f"[{model_name}] failed with the key {key} : {e}")

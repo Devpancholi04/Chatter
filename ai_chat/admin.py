@@ -9,7 +9,7 @@ class AIChatAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ("AI CHATS DETAILS", {"fields" : ('ai_message_id','user')}),
-        ("AI MODELS & RESPONSE", {"fields" : ('ai_model','user_message','ai_response')}),
+        ("AI MODELS & RESPONSE", {"fields" : ('ai_model','api_used','user_message','ai_response')}),
         ("IMPORTANT DATES", {"fields" : ('created_at','updated_at')})
     )
 

@@ -28,6 +28,7 @@ urlpatterns = [
     path('', include('home.urls')),
     path('chats/', include('chat.urls')),
     path('community/', include('community.urls')),
+    path('aichats/', include('ai_chat.urls')),
 ]
 
 

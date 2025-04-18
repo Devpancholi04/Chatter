@@ -1,0 +1,54 @@
+{% extends 'base/main_navbar.html' %}
+
+{% block external_css %}
+<link rel="stylesheet" href="/media/css/ai/ai_chat_page.css">
+{% endblock external_css %}
+
+{% block title %}
+Community
+{% endblock title %}
+
+
+{% block body %}
+<!-- <div class="container">
+    <div class="header-txt">
+        <p>Chatter - Talk to AI 🤖</p>
+    </div>
+    <hr>
+
+    <div class="chat-content">
+        <div class="chat-box" id="chatBox">
+
+        </div>
+        
+        <div class="input-box">
+            <input type="text" id="messageInput" placeholder="Type a message.....">
+            <button onclick="sendMessage()" id="SendBtn">Send</button>
+        </div>
+    </div>
+    
+</div> -->
+
+<div class="container">
+    <div class="header-txt">
+        <p>Chatter <span class="highlight">- Talk to AI 🤖</span></p>
+    </div>
+    <hr>
+
+    <div class="chat-content">
+        <div class="chat-box" id="chatBox">
+            <!-- Messages appear here -->
+        </div>
+        <div class="input-box">
+            <input type="text" id="messageInput" placeholder="Type a message...">
+            <button onclick="sendMessage()" id="SendBtn">Send</button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block external_js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="/media/js/ai/ai_page.js"></script>
+{% endblock external_js %}

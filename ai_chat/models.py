@@ -10,7 +10,7 @@ class AIChat(models.Model):
 
     ai_message_id = models.CharField(max_length=50, primary_key=True, editable=False)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="ai_chats")
-    ai_model = models.CharField(max_length=20, choices=[
+    ai_model = models.CharField(max_length=200, choices=[
         ('DeepSeek-Paid', 'DEEPSEEK-R1:paid'),
         ('DeepSeek-Free', 'deepseek-r1-distill-llama-70b:free'),
         ('QWEN', 'QWEN-32b:free'),

@@ -28,17 +28,8 @@ function sendMessage(){
     if (message === "") return;
 
     if(socket.readyState !== WebSocket.OPEN){
-        DisplayStaticMessage("Connection Lost! Trying to Reconnect.....", "bot");
-
-        socket.onopen = function() {
-            DisplayStaticMessage("Reconnected!","bot");
-            socket.send(JSON.stringify({ message }));
-        };
-
-        socket.onerror = function() {
-            DisplayStaticMessage("Failed to reconnect. Please try again later.", "bot");
-        };
-
+        DisplayStaticMessage("Connection Lost! Sorry for Inconvience....", "bot");
+        DisplayStaticMessage("Please reload the page and Try Again!", "bot");
         return;
     }
 

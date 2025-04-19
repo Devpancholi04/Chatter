@@ -52,7 +52,7 @@ hr{
     margin-top: 15px;
 }
 
-.left-section .community-item {
+/* .left-section .community-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -65,9 +65,14 @@ hr{
 
 .left-section .community-item:hover {
     background: #ececec;
+} */
+
+.explore-txt{
+    text-align: center;
+    margin-bottom: 5px;
 }
 
-.left-section .community-item .follow-btn {
+.follow-btn {
     background: #28a745;
     color: white;
     border: none;
@@ -79,7 +84,7 @@ hr{
     font-weight: bold;
 }
 
-.left-section .community-item .follow-btn:hover {
+.follow-btn:hover {
     background: #218838;
 }
 
@@ -119,7 +124,7 @@ hr{
     text-decoration: none;
 }
 
-.center-section .chat-item {
+.chat-item {
     display: flex;
     align-items: center;
     background: #ffffff;
@@ -132,11 +137,11 @@ hr{
     gap: 15px;
 }
 
-.center-section .chat-item:hover {
+.chat-item:hover {
     background: #f0f2f5;
 }
 
-.center-section .chat-item .user-icon {
+.chat-item .user-icon {
     font-size: 20px;
     margin-right: 10px;
     color: #7d7d7e;
@@ -152,7 +157,7 @@ hr{
     cursor: pointer;
 }
 
-.center-section .chat-item .user-icon img {
+.chat-item .user-icon img {
     width: 45px;
     height: 45px;
     object-fit: cover;
@@ -161,27 +166,27 @@ hr{
 }
 
 
-.center-section .chat-details {
+.chat-details {
     display: flex;
     flex-direction: column;
     margin-left: 10px;
     width: 100%;
 }
 
-.center-section .chat-header {
+.chat-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     font-weight: bold;
 }
 
-.center-section .chat-header .chat-name {
+.chat-header .chat-name {
     font-weight: bold;
     color: #333;
     font-size: 16px;
 }
 
-.center-section .message-count {
+.message-count {
     background: #ff6600;
     color: #fff;
     padding: 3px 8px;
@@ -189,7 +194,7 @@ hr{
     font-size: 14px;
 }
 
-.center-section .message-preview {
+.message-preview {
     color: #555;
     font-size: 16px;
     margin-top: 5px;
@@ -319,4 +324,16 @@ hr{
 
 .right-section .ai-sections .btn:hover{
     background-color: #0056be;
+}
+
+#uid, #username{
+    display: none;
+}
+
+.chatSection{
+    width: 100%;
+}
+
+a{
+    text-decoration: none;
 }

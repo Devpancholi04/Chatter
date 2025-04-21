@@ -6,7 +6,7 @@ from django.core.cache.backends.base import DEFAULT_TIMEOUT
 from django.conf import settings
 
 from django.contrib.auth.decorators import login_required
-
+from .tasks import notify_user
 #rest
 from django.shortcuts import get_object_or_404
 from account.models import CustomUser
@@ -172,3 +172,21 @@ def community_message_marks_as_read(request, cid, uid, username):
     cache.set(community_recent_key, recent_message, timeout=None)
 
     return Response({"message": "All Community Messages marked as read",})
+
+@api_view(['GET'])
+def join_community(request, username, community_id):
+    user = get_object_or_404(CustomUser, username=username)
+    community = get_object_or_404(Community, community_id = community_id)
+
+    if CommunityMember.objects.filter(member=user, community = community).exists():
+        return Response({
+            "message" : f"{username} is already in {community.community_id}"
+        }, status=400)
+    
+    created = CommunityMember.objects.create(member = user, community = community)
+    if created:
+        notify_user.delay(community_id, username)
+
+    return Response({
+        "message" : f"{username} added to {community.community_name}"
+    })

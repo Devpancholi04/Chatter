@@ -78,7 +78,7 @@ function updateCommunitySection(message){
         chatElement.classList.add("chatSection");
 
         chatElement.innerHTML = `
-            <a href="/chats/${uuid}/ref=${username}/#${chat.full_name}" class="chatting">
+            <a href="/community/chats/${uuid}/ref=${username}/#${chat.full_name}" class="chatting">
                 <div class="chat-item">
                     <div class="user-icon">
                         <img src="${chat.image_url}" alt="User">
@@ -97,7 +97,25 @@ function updateCommunitySection(message){
     });
 }
 
+function follow_btn(username, community_id){
+    console.log("follow function called");
+    let joinurl = `/community/api/add-user/community/${username}/${community_id}/`;
+    fetch(joinurl)
+        .then(response => response.json())
+        .then(() => {
+            fetchRecentCommunitiesDetails(uuid, username);
+        });
+}
 
+$(document).ready(function () {
+    $('.follow-btn').on('click', function(){
+        let_username = $(this).data('username');
+        console.log(username);
+        let community_id = $(this).data('community-id');
+        console.log(community_id);
+        follow_btn(username, community_id);
+    });
+});
 
 function truncateText(text) {
     if (!text) return '';

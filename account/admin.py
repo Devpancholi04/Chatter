@@ -2,7 +2,7 @@ from django.contrib import admin
 
 # Register your models here.
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser
+from .models import CustomUser, Friend
 
 
 class CustomUserAdmin(UserAdmin):
@@ -35,6 +35,18 @@ class CustomUserAdmin(UserAdmin):
             return self.readonly_fields
         
         return ('user_id','created_at','updated_at')
+    
+class FriendAdmin(admin.ModelAdmin):
+    search_fields = ['sender__username','receiver__username', 'status']
+    list_filter = ['status','is_send','is_accepted','created_at','updated_at']
+    ordering = ['-created_at']
+    readonly_fields = ('created_at','updated_at',)
 
+    fieldsets = (
+        ("USER DETAILS", {'fields' : ('sender','receiver')}),
+        ("STATUS", {'fields' : ('status', 'is_send', 'is_accepted')}),
+        ("IMPORTANT DATES", {'fields' : ('created_at','updated_at')})
+    )
 
 admin.site.register(CustomUser,CustomUserAdmin)
+admin.site.register(Friend, FriendAdmin)

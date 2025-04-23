@@ -12,19 +12,25 @@ Chatter | Title Page
 
 <div class="main-container">
     <header class="name-bar">
-        <div class="profile-photo">
-            <img src="default-avatar.png" id="avatarPreview" />
-            <input type="file" id="avatarUpload" accept="image/*" />
-            <label for="avatarUpload" class="change-btn"> <i class="fa-solid fa-pen-to-square"></i> </label>
-        </div>
+        <form id="profilePhotoForm" enctype="multipart/form-data" method="post">
+            {% csrf_token %}
+            <div class="profile-photo" data-upload-url="{% url 'update_photo' user.uid %}">
+                <img src="{% if user.profile_photos %}{{ user.profile_photos.url }}{% else %}/media/images/user_logo/user_img.jpg{% endif %}" id="avatarPreview" />
+                <input type="file" id="avatarUpload" accept="image/*" hidden />
+                <label for="avatarUpload" class="change-btn">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                </label>
+            </div>
+        </form>
 
         <div class="user-info">
-            <h2>John Doe</h2>
-            <p>UserID: #12345 Username: johnd</p>
-            <p>Status: Online</p>
-            <p>Bio: Hey there! I'm using Chatter</p>
-            <p>99 Friends | <a href="#">Add / Search More</a></p>
-        </div>
+            <h2>{{ user.first_name }} {{ user.last_name }}</h2>
+            <p>Username: {{ user.username }}</p>
+            <p>Status: {% if user.is_active == True %} Verified {% else %} Not Verified {% endif %}</p>
+            <p>Bio: {% if user.bio %} {{ user.bio }} {% else %} Hey there! I'm using Chatter {% endif %}</p>
+            <p>{{friend_count}} Friends </p>
+            <!-- <a href="" class="add-friend-btn"> + Add Friend</a> -->
+        </div> 
     </header>
 
     <nav class="tabs">
@@ -39,22 +45,37 @@ Chatter | Title Page
     <section class="tab-content" id="friends" style="display:none;">
         <h3>Friends</h3>
         <div class="card-container">
+            {% for friend in friend_list %}
             <div class="friend-card">
-                <div class="friend-name">Dev</div>
-                <button onclick="alert('Dev added as friend!')">➕ Add Friend</button>
+                <img src=" 
+                    {% if friend.sender.profile_images %}
+                        {{ friend.sender.profile_images.url }}
+                    {% else %}
+                        /media/images/user_logo/user_img.jpg
+                    {% endif %}" alt="User Image" class="friend-image">
+                <div class="friend-username">{{ friend.sender.username }}</div>
+                <div class="friend-fullname">
+                    {{ friend.sender.first_name }} {{ friend.sender.last_name }}
+                </div>
+                <a href="#" class="openProfile">👤 View Profile</a>
             </div>
+            {% endfor %}
+
+            {% for grp in group %}
             <div class="friend-card">
-                <div class="friend-name">Gaurv</div>
-                <button onclick="alert('Garv added as friend!')">➕ Add Friend</button>
+                <img src=" 
+                    {% if grp.image %}
+                        {{ grp.image.url }}
+                    {% else %}
+                        /media/images/user_logo/group_img.jpg
+                    {% endif %}" alt="User Image" class="friend-image">
+                <div class="friend-fullname">
+                    {{ grp.group_name }}
+                </div>
+                <a href="#" class="openProfile">👤 View Group </a>
             </div>
-            <div class="friend-card">
-                <div class="friend-name">Abhishek</div>
-                <button onclick="alert('Abhishek added as friend!')">➕ Add Friend</button>
-            </div>
-            <div class="friend-card">
-                <div class="friend-name">Rachel</div>
-                <button onclick="alert('Rachit added as friend!')">➕ Add Friend</button>
-            </div>
+            {% endfor %}
+            
         </div>
     </section>
 
@@ -62,22 +83,20 @@ Chatter | Title Page
     <section class="tab-content" id="communities" style="display:none;">
         <h3>Communities</h3>
         <div class="card-container">
-            <div class="community-card">
-                <div class="community-name">⚽ Football Community</div>
-                <button onclick="alert('Joined Football Community!')">Join</button>
+            {% for com in community %}
+            <div class="friend-card">
+                <img src=" 
+                    {% if com.community.image %}
+                        {{ com.community.image.url }}
+                    {% else %}
+                        /media/images/user_logo/group_img.jpg
+                    {% endif %}" alt="User Image" class="friend-image">
+                <div class="friend-fullname">
+                    {{ com.community.community_name }}
+                </div>
+                <a href="#" class="openProfile">👤 View Details</a>
             </div>
-            <div class="community-card">
-                <div class="community-name">🏏 IPL Community</div>
-                <button onclick="alert('Joined IPL Community!')">Join</button>
-            </div>
-            <div class="community-card">
-                <div class="community-name">🎓 TMU Community</div>
-                <button onclick="alert('Joined TMU Community!')">Join</button>
-            </div>
-            <div class="community-card">
-                <div class="community-name">🏆 BCCI Community</div>
-                <button onclick="alert('Joined BCCI Community!')">Join</button>
-            </div>
+            {% endfor %}
         </div>
     </section>
 
@@ -98,61 +117,69 @@ Chatter | Title Page
     </section>
 
     <section class="tab-content" id="personal">
-        <div class="form-group">
-            <label>First Name:</label>
-            <input type="text" placeholder="John" />
-        </div>
-        <div class="form-group">
-            <label>Last Name:</label>
-            <input type="text" placeholder="Doe" />
-        </div>
-        <div class="form-group">
-            <label>Change Email:</label>
-            <input type="email" placeholder="john@example.com" />
-        </div>
-        <div class="form-group">
-            <label>Mobile Number:</label>
-            <input type="text" placeholder="+91-9876543210" />
-        </div>
-        <div class="form-group">
-            <label>Date of Birth:</label>
-            <input type="date" />
-        </div>
-        <div class="form-group">
-            <label>Gender:</label>
-            <select>
-                <option>Male</option>
-                <option>Female</option>
-                <option>Other</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label>Bio:</label>
-            <input type="text" placeholder="Hey there! I'm using Chatter" />
-        </div>
+        <form action="{% url 'personal_details' user.uid %}" method="post"> {% csrf_token %}
 
-        <button class="update-btn">Update</button>
+            <div class="form-group">
+                <label>First Name:</label>
+                <input type="text" value="{{user.first_name}}" name="first_name" />
+            </div>
+            <div class="form-group">
+                <label>Last Name:</label>
+                <input type="text" value="{{user.last_name}}" name="last_name" />
+            </div>
+            <div class="form-group">
+                <label>Change Email:</label>
+                <input type="email" value="{{user.email}}" name="email" />
+            </div>
+            <div class="form-group">
+                <label>Mobile Number:</label>
+                <input type="text" value="{{user.mobile_number}}" name="mobile_number" />
+            </div>
+    
+            <div class="form-group">
+                <label>Date of Birth:</label>
+                <input type="date" value="{{ user.dob|date:'Y-m-d' }}" name="dob" />
+            </div>
+            <div class="form-group">
+                <label>Gender:</label>
+                <select name="gender">
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Bio:</label>
+                <input type="text" value="{% if user.bio %} {{ user.bio }} {% else %} Hey there! I'm using Chatter {% endif %}" name="bio"/>
+            </div>
+    
+            <button type="submit" class="update-btn">Update</button>
+        </form>
     </section>
 
     <section class="tab-content" id="address" style="display:none;">
-        <div class="form-group">
-            <label>Complete Address:</label>
-            <textarea placeholder="123 Main Street, Near ABC Park"></textarea>
-        </div>
-        <div class="form-group">
-            <label>City:</label>
-            <input type="text" placeholder="New Delhi" />
-        </div>
-        <div class="form-group">
-            <label>State:</label>
-            <input type="text" placeholder="Delhi" />
-        </div>
-        <div class="form-group">
-            <label>Pincode:</label>
-            <input type="text" placeholder="110001" />
-        </div>
 
-        <button class="update-btn">Update</button>
+        <form action="{% url 'address_details' user.uid %}" method="post">{% csrf_token %}
+            <div class="form-group">
+                <label>Complete Address:</label>
+                <textarea name="address">{% if user.address %} {{ user.address }} {% else %} N/A {% endif %}</textarea>
+            </div>
+            <div class="form-group">
+                <label>City:</label>
+                <input type="text" value="{% if user.city %} {{ user.city }} {% else %} N/A {% endif %}" name="city" />
+            </div>
+            <div class="form-group">
+                <label>State:</label>
+                <input type="text" value="{% if user.state %} {{ user.state }} {% else %} N/A {% endif %}" name="state" />
+            </div>
+            <div class="form-group">
+                <label>Pincode:</label>
+                <input type="text" value="{% if user.pin_code %} {{ user.pin_code }} {% else %} N/A {% endif %}" name="pin_code" />
+            </div>
+    
+            <button type="submit" class="update-btn">Update</button>
+
+        </form>
     </section>
 
 </div>
@@ -162,5 +189,127 @@ Chatter | Title Page
 {% endblock body %}
 
 {% block external_js %}
-<script src="/media/js/home/profile.js"></script>
+<!-- <script src="/media/js/home/profile.js"></script> -->
 {% endblock external_js %}
+
+{% block internal_js %}
+<script>
+    document.getElementById("avatarUpload").addEventListener("change", function () {
+    const file = this.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("profile_photos", file);
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    const uploadUrl = document.querySelector(".profile-photo").dataset.uploadUrl;
+
+    fetch(uploadUrl, {
+        method: "POST",
+        headers: {
+            'X-CSRFToken': csrfToken,
+        },
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.url) {
+            document.getElementById("avatarPreview").src = data.url;
+        } else {
+            console.error("Upload failed:", data.message || data.errors);
+        }
+    })
+    .catch(err => console.error("Error:", err));
+});
+
+
+
+const avatarUpload = document.getElementById("avatarUpload");
+const avatarPreview = document.getElementById("avatarPreview");
+
+
+const tabButtons = document.querySelectorAll(".tab");
+const tabContents = document.querySelectorAll(".tab-content");
+
+tabButtons.forEach(btn => {
+    btn.addEventListener("click", function () {
+        const tabId = this.getAttribute("data-tab");
+
+        tabContents.forEach(tab => tab.style.display = "none");
+        document.getElementById(tabId).style.display = "block";
+
+        tabButtons.forEach(b => b.classList.remove("active"));
+        this.classList.add("active");
+    });
+});
+
+function showSetting(option) {
+    const content = document.getElementById("setting-content");
+
+    if (option === 'deactivate') {
+        content.innerHTML = `
+        <div class="setting-box">
+            <h4 class="setting-title">Deactivate Account</h4>
+            <form action="{% url 'deactivate_account' user.uid %}" method="post">{% csrf_token %}
+                <div class="form-group">
+                    <label>Email ID:</label>
+                    <input type="email" class="form-input" placeholder="Enter your email" name="email">
+                </div>
+                <div class="form-group">
+                    <label>Password:</label>
+                    <input type="password" class="form-input" placeholder="Enter your password" name="password">
+                </div>
+                <button type="submit" class="btn-primary">Proceed</button>
+            </form>
+        </div>
+      `;
+    } else if (option === 'password') {
+        content.innerHTML = `
+        <div class="setting-box">
+            <h4 class="setting-title">Change Password</h4>
+            <form action="{% url 'change_password' user.uid %}" method="post">{% csrf_token %}
+
+                <div class="form-group">
+                    <label>Old Password:</label>
+                    <input type="password" class="form-input" name="old_pass">
+                </div>
+                <div class="form-group">
+                    <label>New Password:</label>
+                    <input type="password" class="form-input" name="new_pass">
+                </div>
+                <div class="form-group">
+                    <label>Confirm Password:</label>
+                    <input type="password" class="form-input" name="co_new_pass">
+                </div>
+
+                <button type="submit" class="btn-primary">Change Password</button>
+            </form>
+        </div>
+      `;
+    } else if (option === '2fa') {
+        content.innerHTML = `
+        <div class="setting-box">
+            <h4 class="setting-title">Two-Factor Authentication</h4>
+            <form id="twofa-form" action="{% url 'two_f_a' user.uid %}" method="post">{% csrf_token %}
+
+                
+                <label class="switch">
+                    <input type="checkbox" name="twofa" id="twofa-toggle">
+                    <span class="slider round"></span>
+                </label>
+                <p id="2fa-status">Two Factor Authentication is <strong>{% if user.is_two_step_verification == True %}Enabled {% else %} Disabled {% endif %}</strong></p>
+            </form>
+        </div>
+    `;
+
+    const toggle = document.getElementById('twofa-toggle');
+    const form = document.getElementById('twofa-form');
+
+    toggle.addEventListener('change', () => {
+        form.submit();
+    });
+}
+
+}
+
+</script>
+{% endblock internal_js %}

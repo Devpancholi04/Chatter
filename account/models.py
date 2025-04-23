@@ -79,7 +79,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     gender = models.CharField(max_length=50, choices=GENDER_CHOICES, null=True, blank=True)
 
     # user Profile Detials
-    bio = models.TextField(null=True, blank=True)
+    bio = models.TextField(null=True, blank=True, default="Hey there! I'm using Chatter")
     profile_photos = models.ImageField(upload_to='profile_photos/', null=True, blank=True)
 
     # Address detials
@@ -126,3 +126,27 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} -- {self.username}"
+    
+
+class Friend(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('accepted', 'Accepted'),
+        ('rejected', 'Rejected'),
+        ('cancelled', 'Cancelled'),
+    ]
+
+    sender = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="friend_request_sender_user")
+    receiver = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="friend_request_receiver_user")
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    is_send = models.BooleanField(default=True)
+    is_accepted = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ('sender', 'receiver')
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.sender} ➜ {self.receiver} [{self.status}]"

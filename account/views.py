@@ -183,8 +183,8 @@ Best Regards,
 Chatter Team
 '''
                 send_email.delay(subject=subject, message=message, email=user.email)
-                return HttpResponse(request, "<h1> Login Success </h1>") # add the login of the home page after login to be redirect user
-
+                # return HttpResponse(request, "<h1> Login Success </h1>") # add the login of the home page after login to be redirect user
+                return redirect("home_page")
                      
 
         except CustomUser.DoesNotExist():
@@ -259,7 +259,7 @@ def verify_otp(request, user_id, username):
             if session_otp == user_otp:
                 del request.session[user_id]
 
-                return redirect() #redirect to home page
+                return redirect("home_page") #redirect to home page
         
             else:
                 messages.warning(request, "Invalid OTP.")

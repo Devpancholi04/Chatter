@@ -23,13 +23,14 @@ from datetime import datetime
 
 CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
 
+@login_required(login_url='/accounts/login/')
 def chat_page(request, uid, username):
 
     
     parmas = {'uid' : uid, 'username' : username}
     return render(request, "chat/chat_page.html", parmas)
 
-
+@login_required(login_url='/accounts/login/')
 @api_view(['GET'])
 def chat_page_sidebar(request, uid, username):
     user = get_object_or_404(CustomUser, uid=uid, username=username)
@@ -105,6 +106,7 @@ def chat_page_sidebar(request, uid, username):
     return Response({'message': recent_message})
 
 
+@login_required(login_url='/accounts/login/')
 @api_view(['GET'])
 def load_history(request, uid, username, rec_uid, rec_username):
 
@@ -136,7 +138,7 @@ def load_history(request, uid, username, rec_uid, rec_username):
 
     return Response({'Messages' : list_messages})
 
-
+@login_required(login_url='/accounts/login/')
 @api_view(['GET'])
 def load_group_history(request, group_id, uid, username):
     group_chat_history_id = f"GROUP-CHAT-CACHE:{group_id}"
@@ -183,7 +185,7 @@ def load_group_history(request, group_id, uid, username):
     return Response({'Messages' : list_messages})
 
    
-
+@login_required(login_url='/accounts/login/')
 @api_view(['GET'])
 def mark_as_read(request, uid, username, rec_uid, rec_username):
     chat_cache_id = f"CHAT:CACHE:send-{uid}-{username} : rec:{rec_uid}-{rec_username}"
@@ -240,7 +242,7 @@ def mark_as_read(request, uid, username, rec_uid, rec_username):
         'total_updated': updated_count
     })
 
-
+@login_required(login_url='/accounts/login/')
 @api_view(['GET'])
 def group_message_mark_as_read(request, group_id, uid, username):
     group_cache_key = f"GROUP-CHAT-CACHE:{group_id}"

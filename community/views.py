@@ -17,12 +17,14 @@ from rest_framework.response import Response
 from datetime import datetime
 # Create your views here.
 
+@login_required(login_url='/accounts/login/')
 def community_page(request, uid, username):
 
     
     parmas = {'uid' : uid, 'username' : username}
     return render(request, "community/community_page.html", parmas)
 
+@login_required(login_url='/accounts/login/')
 @api_view(['GET'])
 def community_page_sidebar(request, uid, username):
     user = get_object_or_404(CustomUser, uid=uid, username=username)
@@ -79,7 +81,7 @@ def community_page_sidebar(request, uid, username):
 
     return Response({'message' : recent_message})
 
-
+@login_required(login_url='/accounts/login/')
 @api_view(['GET'])
 def load_community_messages(request, cid, uid, username):
 
@@ -127,7 +129,7 @@ def load_community_messages(request, cid, uid, username):
 
     return Response({'message' : list_messages})
 
-
+@login_required(login_url='/accounts/login/')
 @api_view(['GET'])
 def community_message_marks_as_read(request, cid, uid, username):
 
@@ -173,6 +175,7 @@ def community_message_marks_as_read(request, cid, uid, username):
 
     return Response({"message": "All Community Messages marked as read",})
 
+@login_required(login_url='/accounts/login/')
 @api_view(['GET'])
 def join_community(request, username, community_id):
     user = get_object_or_404(CustomUser, username=username)

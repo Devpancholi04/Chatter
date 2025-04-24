@@ -9,6 +9,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from django.contrib.auth.hashers import check_password
+from django.contrib.auth.decorators import login_required
+
 
 from django.contrib import messages
 from django.contrib.auth import logout
@@ -17,6 +19,7 @@ from base.otp import gen_otp
 from base.emails import send_email
 # Create your views here.
 
+@login_required(login_url='/accounts/login/')
 def home_page(request):
     user = request.user
 
@@ -32,6 +35,7 @@ def home_page(request):
 
     return render(request, "home/home_page.html", params) 
 
+@login_required(login_url='/accounts/login/')
 def profile_section(request):
     user = request.user
 
@@ -53,6 +57,7 @@ def profile_section(request):
     }
     return render(request, "home/profile.html", params)
 
+@login_required(login_url='/accounts/login/')
 def personal_details(request, uid):
     user = request.user
     changes_made = False
@@ -117,6 +122,7 @@ def personal_details(request, uid):
     return redirect('profile_page')
 
 
+@login_required(login_url='/accounts/login/')
 def address_details(request, uid):
 
     user = request.user
@@ -156,6 +162,7 @@ def address_details(request, uid):
 
     return redirect('profile_page')
 
+@login_required(login_url='/accounts/login/')
 @api_view(['POST'])
 def update_profile_photo(request, uid):
     user = request.user
@@ -174,6 +181,7 @@ def update_profile_photo(request, uid):
         'message': 'Error while updating profile photo',
     }, status=400)
 
+@login_required(login_url='/accounts/login/')
 def deactivate_account(request, uid):
 
     user = request.user
@@ -222,6 +230,7 @@ Chatter Team
 
     return redirect('profile_page')
 
+@login_required(login_url='/accounts/login/')
 def change_password(request, uid):
 
     user = request.user
@@ -270,6 +279,7 @@ Chatter Team
     
     return redirect("profile_page")
 
+@login_required(login_url='/accounts/login/')
 def two_f_a(request, uid):
     user = request.user
     email = user.email
@@ -324,7 +334,7 @@ Chatter Team
     return redirect("profile_page")
 
 
-
+@login_required(login_url='/accounts/login/')
 def otp_verify(request, uid, type):
     user = request.user
     session_key = f"otp_{uid}_{type}"

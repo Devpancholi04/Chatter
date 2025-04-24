@@ -127,7 +127,7 @@ def login_page(request):
         try:
             get_user = CustomUser.objects.get(email = email)
 
-            auth_user = authenticate(email = email, password = password)
+            auth_user = authenticate(request, email = email, password = password)
 
             if auth_user:
                 user = get_user
@@ -187,7 +187,7 @@ Chatter Team
                 return redirect("home_page")
                      
 
-        except CustomUser.DoesNotExist():
+        except CustomUser.DoesNotExist:
             messages.warning(request, "user not found!")
             return HttpResponseRedirect(request.path_info)
         
@@ -265,7 +265,7 @@ def verify_otp(request, user_id, username):
                 messages.warning(request, "Invalid OTP.")
                 return HttpResponseRedirect(request.path_info)
     
-    except user.DoesNotExist():
+    except user.DoesNotExist:
         messages.warning(request, "Invalid username")
         return redirect('login')
 
@@ -363,7 +363,7 @@ Chatter Team
             return redirect('reset_password')
     
     # rasing warning if user not exisits.
-    except CustomUser.DoesNotExist():
+    except CustomUser.DoesNotExist:
         messages.warning(request, "User Not Exists.")
         return redirect("login")
 

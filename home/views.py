@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
-from account.models import Friend
+from account.models import Friend, CustomUser
 from chat.models import Group
 from django.db.models import Q, Count
 from community.models import Community, CommunityMember
@@ -439,3 +439,42 @@ Chatter Team
             
 
     return render(request, 'accounts/two_step_verification.html')
+
+@api_view(['GET'])
+def search_users(request):
+
+    query = request.GET.get('q','')
+    if query:
+        users = CustomUser.objects.filter(
+            Q(username__icontains=query) |
+            Q(first_name__icontains = query) |
+            Q(last_name__icontains = query)
+        )[:10]
+
+        result = [
+            {
+                'username' : user.username,
+                'name' : f"{user.first_name} {user.last_name}",
+                'profile_photo' : user.profile_photos.url if user.profile_photos else '/media/images/user_logo/user_img.jpg',
+            }
+            for user in users
+        ]
+        return Response({"users": result})
+    return Response({"message" : "No user Found"})
+
+
+def user_profile(request, username):
+
+    user = CustomUser.objects.get(username = username)
+
+    friend = Friend.objects.filter(Q(sender = user) | Q(receiver = user), status='accepted')
+    friend_count = friend.count()
+
+    params = {
+        'user' : user,
+        'friend_list' : friend,
+        'friend_count' : friend_count,
+    }
+    print(params)
+
+    return render(request, "home/profile_page_for_user.html", params)

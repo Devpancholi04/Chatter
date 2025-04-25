@@ -18,7 +18,6 @@ body{
     width: 35%;
     padding: 20px;
     height: auto;
-    /* background-color: white; */
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
@@ -336,4 +335,9 @@ hr{
 
 a{
     text-decoration: none;
+}
+
+.note{
+    color: red;
+    font-weight: bold;
 }

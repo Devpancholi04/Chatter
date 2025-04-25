@@ -11,5 +11,8 @@ urlpatterns = [
     path('api/deactivate/account/<str:uid>/', views.deactivate_account, name="deactivate_account"),
     path('api/change-password/<str:uid>/', views.change_password, name="change_password"),
     path('api/active/two-f-a/verification/<str:uid>', views.two_f_a, name="two_f_a"),
-    path('verify/otp/page/<str:uid>/type=<str:type>/', views.otp_verify, name="otp_verify_func")
+    path('verify/otp/page/<str:uid>/type=<str:type>/', views.otp_verify, name="otp_verify_func"),
+
+    path('api/search/user/',views.search_users, name="search_users"),
+    path('user/profile/<str:username>/', views.user_profile, name="user_profile")
 ]

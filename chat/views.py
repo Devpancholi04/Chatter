@@ -1,8 +1,5 @@
 from django.shortcuts import render
-from django.http import JsonResponse
 from .models import *
-
-from django.utils import timezone
 
 from django.core.cache import cache
 from django.core.cache.backends.base import DEFAULT_TIMEOUT
@@ -12,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 
 # rest
 from django.shortcuts import get_object_or_404
-from account.models import CustomUser
+from account.models import CustomUser, Friend
 from django.db.models import Count, Max, Q
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -35,6 +32,10 @@ def chat_page(request, uid, username):
 def chat_page_sidebar(request, uid, username):
     user = get_object_or_404(CustomUser, uid=uid, username=username)
 
+    friends = Friend.objects.filter(
+        Q(sender=user, is_accepted=True) | Q(receiver=user, is_accepted=True)
+    )
+    friend_users = [friend.sender if friend.sender != user else friend.receiver for friend in friends]
 
     chat_recent_key = f"CHAT-RECENT-KEY: {uid} - {username}"
     recent_message = cache.get(chat_recent_key)
@@ -102,8 +103,35 @@ def chat_page_sidebar(request, uid, username):
     else:
         recent_message = sorted(recent_message, key=get_datetime, reverse=False)
     
+    recent_message_uids = []
+    for chat in recent_message:
+        if 'uid' in chat:
+            recent_message_uids.append(chat['uid'])
+        elif 'group_id' in chat:
+            recent_message_uids.append(chat['group_id'])
+    
+    friend_list = [
+        {
+            'uid': friend_user.uid,
+            'full_name': f"{friend_user.first_name} {friend_user.last_name}",
+            'username': friend_user.username,
+            'image_url': friend_user.profile_photos.url if friend_user.profile_photos else '/media/images/user_logo/user_img.jpg',
+            'last_message' : '',
+            'last_msg_data' : friend_user.created_at.strftime('%d-%m-%Y'),
+            'last_msg_time' : friend_user.created_at.strftime('%I:%M %p'),
+            'unread_count' : 0
+        }
+        for friend_user in friend_users
+        if friend_user.uid not in recent_message_uids
+    ]
+
+    recent_message.extend(friend_list)
+
     # print(f"recent_messages : {recent_message}")
-    return Response({'message': recent_message})
+    return Response({
+        'message': recent_message,
+        'friend_list': friend_list,    
+    })
 
 
 @login_required(login_url='/accounts/login/')

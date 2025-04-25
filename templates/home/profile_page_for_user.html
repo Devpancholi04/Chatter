@@ -1,0 +1,46 @@
+{% extends 'base/main_navbar.html' %}
+
+{% block title %}
+Chatter | Title Page
+{% endblock title %}
+
+
+{% block external_css %}
+<link rel="stylesheet" href="/media/css/home/profile.css">
+{% endblock external_css %}
+
+{% block internal_css %}
+<style>
+    .main-container{
+        max-width: 600px;
+    }
+</style>
+{% endblock internal_css %}
+
+{% block body %}
+
+<div class="main-container">
+    <header class="name-bar">
+        <form id="profilePhotoForm" enctype="multipart/form-data" method="post">
+            {% csrf_token %}
+            <div class="profile-photo" data-upload-url="{% url 'update_photo' user.uid %}">
+                <img src="{% if user.profile_photos %}{{ user.profile_photos.url }}{% else %}/media/images/user_logo/user_img.jpg{% endif %}" id="avatarPreview" />
+            </div>
+        </form>
+
+        <div class="user-info">
+            <h2>{{ user.first_name }} {{ user.last_name }}</h2>
+            <p>Username: {{ user.username }}</p>
+            <p>Status: {% if user.is_active == True %} Verified {% else %} Not Verified {% endif %}</p>
+            <p>Bio: {% if user.bio %} {{ user.bio }} {% else %} Hey there! I'm using Chatter {% endif %}</p>
+            <p>{{friend_count}} Friends </p>
+            {% if friend_list %}
+                <a href="{% url 'chat_page' request.user.uid request.user.username %}" class="add-friend-btn"> Chat Now</a>
+            {% else %}
+                <a href="#" class="add-friend-btn"> + Add Friend</a>
+            {% endif %}
+
+        </div> 
+    </header>
+
+{% endblock %}

@@ -53,7 +53,6 @@ function fetchRecentChatDetails(uid, username) {
         type: "GET",
         datatype: "json",
         success: function (response) {
-            // console.log("Response : " + response);
 
             let chats = response.message || [];
             if (Array.isArray(chats)) {

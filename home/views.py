@@ -226,7 +226,7 @@ Chatter Team
 
 '''
         send_email.delay(email = email, subject = subject, message = message)
-        redirect('otp_verify_func', uid, type = "deactivate")
+        redirect('otp_verify_func', uid=uid, type = "deactivate")
 
     return redirect('profile_page')
 
@@ -274,7 +274,7 @@ Chatter Team
 '''
         
         send_email.delay(email = email, subject = subject, message = message)
-        return redirect('otp_verify_func', uid, type = "change_password")
+        return redirect('otp_verify_func', uid=uid, type = "change_password")
 
     
     return redirect("profile_page")
@@ -327,7 +327,7 @@ Chatter Team
 '''
         
         send_email.delay(email = email, subject = subject, message = message)
-        return redirect('otp_verify_func', uid, type = "2fa")
+        return redirect('otp_verify_func', uid=uid, type = "2fa")
 
 
 
@@ -464,6 +464,12 @@ def search_users(request):
 
 
 def user_profile(request, username):
+
+    active_user = request.user.username
+    print(active_user)
+
+    if active_user == username:
+        return redirect('profile_page')
 
     user = CustomUser.objects.get(username = username)
 

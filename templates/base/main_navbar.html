@@ -110,7 +110,8 @@
                 $('#chatSearch').val('');
                 $('#searchDropdown').hide();
 
-                const chaturl = `/chats/{{request.user.uid}}/ref={{request.user.username}}/`;
+                // const chaturl = `/chats/{{request.user.uid}}/ref={{request.user.username}}/`;
+                const chaturl = `/user/profile/${username}/`;
                 window.location.href = chaturl;
             });
 

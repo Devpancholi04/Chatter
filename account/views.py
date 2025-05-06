@@ -144,9 +144,9 @@ def login_page(request):
                     return HttpResponseRedirect(request.path_info)
                 
                 if user.is_two_step_verification == True:
-                    user_id = user.user_id
+                    user_id = user.uid
                     otp = gen_otp()
-                    request.session[user_id] = otp
+                    request.session[str(user_id)] = otp
 
                     subject = "Login OTP verification"
                     message = f'''Hello, {user.first_name}, 
@@ -164,7 +164,7 @@ This is auto generated mail.
 Best Regards,
 Chatter Team
 '''               
-                    send_email.delay()(subject=subject, message=message, email=user.email)
+                    send_email.delay(subject=subject, message=message, email=user.email)
                     return redirect('verify_otp', user.uid, user.username) # otp verification link will come here.
                 
                 # sending login email to the user if not activated two step verification mail
@@ -255,7 +255,7 @@ def verify_otp(request, user_id, username):
         if request.method == "POST":
             user_otp = request.POST.get('otp')
             session_otp = request.session.get(user_id)
-
+            
             if session_otp == user_otp:
                 del request.session[user_id]
 

@@ -34,7 +34,7 @@ class AIConsumer(AsyncWebsocketConsumer):
 
     
     
-    api1 = "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"
+    api1 = "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"
     api2 = "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"
 
     api = [api1, api2]
@@ -53,9 +53,9 @@ class AIConsumer(AsyncWebsocketConsumer):
 
     predefined_response = {
         "what is chatter ai?" : "Chatter AI is a smart assistant that helps you to get instant answers to your queries!",
-        "who created you?" : "I was created by the amazing Dev Pancholi and Grav Bhatia",
+        "who created you?" : "I was created by the amazing **Dev Pancholi** and **Garv Bhatia**",
         "who is dev pancholi?" : "**Dev Pancholi** is a full stack developer who created me(Chatter) with garv bhatia. And worked as front-end development, backend development, Database Mangement, etc.",
-        "who is garv bhatia?" : "**Garv Bhatia** is a FrontEnd Developed who created me with Deve Pancholi. And worked as FrontEnd Developer.",
+        "who is garv bhatia?" : "**Garv Bhatia** is a FrontEnd Developed who created me with Dev Pancholi. And worked as FrontEnd Developer.",
         "how to use chatter ai?" : "Just type your question and press send! I’ll take care of the rest.", 
 
         "are you human?": "Nope! I'm a virtual assistant designed to help you as best as I can.",
@@ -158,6 +158,7 @@ class AIConsumer(AsyncWebsocketConsumer):
                 full_respone = re.sub(r"\*\*|###", "", full_response)
                 full_respone = f"$$ {full_respone.strip()} $$"
 
+                print(full_respone)
 
                 await self.send(text_data=json.dumps({
                     'message': full_response,

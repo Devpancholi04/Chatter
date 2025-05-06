@@ -108,7 +108,7 @@ Chatter | Title Page
                 <button onclick="showSetting('deactivate')">Deactivate Account</button>
                 <button onclick="showSetting('password')">Change Password</button>
                 <button onclick="showSetting('2fa')">Two Factor Authentication</button>
-                <button onclick="alert('Logged out!')">Logout</button>
+                <button onclick="logoutfun()">Logout</button>
             </div>
             <div class="settings-content" id="setting-content">
                 <p>Select an option from left</p>
@@ -289,7 +289,7 @@ function showSetting(option) {
 
                 
                 <label class="switch">
-                    <input type="checkbox" name="twofa" id="twofa-toggle">
+                    <input type="checkbox" name="twofa" id="twofa-toggle" {% if user.is_two_step_verification %}checked{% endif %}>
                     <span class="slider round"></span>
                 </label>
                 <p id="2fa-status">Two Factor Authentication is <strong>{% if user.is_two_step_verification == True %}Enabled {% else %} Disabled {% endif %}</strong></p>
@@ -304,8 +304,12 @@ function showSetting(option) {
         form.submit();
     });
 }
-
 }
+
+function logoutfun(){
+    window.location.href = "{% url 'logout_page' %}";
+}
+
 
 </script>
 {% endblock internal_js %}

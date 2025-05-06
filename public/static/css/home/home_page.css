@@ -1,5 +1,8 @@
-body{
+/* Base styles */
+body {
     background-color: #d9d9d9;
+    color: #333;
+    transition: all 0.3s ease;
 }
 
 .container {
@@ -9,12 +12,14 @@ body{
     padding: 20px;
 }
 
-.left-section, .center-section, .right-section{
+.left-section, .center-section, .right-section {
     padding: 20px;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+    transition: all 0.3s ease;
 }
 
-.left-section{
+.left-section {
     width: 35%;
     padding: 20px;
     height: auto;
@@ -22,51 +27,39 @@ body{
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-.sub-sections{
+.sub-sections {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
 }
 
-hr{
-    border-color: black;
+hr {
+    border-color: #333;
     margin-top: 10px;
     width: 100%;
     margin-bottom: 10px;
+    transition: all 0.3s ease;
 }
 
 .sub-sections h2 {
     color: #007bff;
     font-size: 22px;
     margin-bottom: 10px;
+    transition: color 0.3s ease;
 }
 
 .sub-sections p {
     font-size: 16px;
     color: #555;
+    transition: color 0.3s ease;
 }
 
 .left-section .sub-sections .community-section {
     margin-top: 15px;
 }
 
-/* .left-section .community-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #f9f9f9;
-    padding: 10px 15px;
-    border-radius: 8px;
-    margin: 8px 0;
-    transition: 0.3s;
-}
-
-.left-section .community-item:hover {
-    background: #ececec;
-} */
-
-.explore-txt{
+.explore-txt {
     text-align: center;
     margin-bottom: 5px;
 }
@@ -87,21 +80,22 @@ hr{
     background: #218838;
 }
 
-.load{
+.load {
     margin-top: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.load a{
+.load a {
     text-decoration: none;
-    color: black;
+    color: #333;
     font-size: large;
     font-weight: bold;
+    transition: color 0.3s ease;
 }
 
-.load a:hover{
+.load a:hover {
     color: #007bff;
     text-decoration: underline;
 }
@@ -109,16 +103,18 @@ hr{
 .center-section {
     width: 40%;
     margin: 0 20px;
+    border-radius: 10px;
 }
 
-.center-section .sub-sections .heading{
+.center-section .sub-sections .heading {
     font-size: 20px;
     font-weight: bolder;
-    color: black;
+    color: #333;
     margin-bottom: 10px;
+    transition: color 0.3s ease;
 }
 
-.center-section .chatting{
+.center-section .chatting {
     width: 100%;
     text-decoration: none;
 }
@@ -132,7 +128,7 @@ hr{
     padding: 12px;
     margin-bottom: 10px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    transition: background 0.3s ease;
+    transition: all 0.3s ease;
     gap: 15px;
 }
 
@@ -152,7 +148,7 @@ hr{
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: all 0.3s ease;
     cursor: pointer;
 }
 
@@ -163,7 +159,6 @@ hr{
     border-radius: 50%;
     transition: transform 0.3s ease;
 }
-
 
 .chat-details {
     display: flex;
@@ -183,6 +178,7 @@ hr{
     font-weight: bold;
     color: #333;
     font-size: 16px;
+    transition: color 0.3s ease;
 }
 
 .message-count {
@@ -191,6 +187,7 @@ hr{
     padding: 3px 8px;
     border-radius: 12px;
     font-size: 14px;
+    transition: background 0.3s ease;
 }
 
 .message-preview {
@@ -198,22 +195,23 @@ hr{
     font-size: 16px;
     margin-top: 5px;
     text-align: left;
+    transition: color 0.3s ease;
 }
 
-.right-section{
+.right-section {
     width: 30%;
+    border-radius: 10px;
 }
 
-.right-section .profile-section{
+.right-section .profile-section {
     margin-bottom: 20px;
     background: #f0f2f5;
     border-radius: 12px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
     padding: 20px;
     text-align: left;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: all 0.3s ease;
 }
-
 
 .right-section .profile-section .profile-header {
     display: flex;
@@ -221,27 +219,29 @@ hr{
     gap: 15px;
 }
 
-.right-section .profile-section .profile-header .details .profile-actions{
+.right-section .profile-section .profile-header .details .profile-actions {
     margin-top: 10px;
 }
 
 .right-section .profile-section .profile-header .details .complete-profile-btn {
     text-decoration: none;
     font-weight: bold;
+    transition: color 0.3s ease;
 }
 
-.right-section .profile-section .profile-header .details .complete-profile-btn:hover{
+.right-section .profile-section .profile-header .details .complete-profile-btn:hover {
     color: #007bff;
     text-decoration: underline;
 }
 
-.right-section .anonymous-section, .right-section .ai-sections{
+.right-section .anonymous-section, .right-section .ai-sections {
     margin-bottom: 20px;
     padding: 15px;
     background: white;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
     text-align: center;
     border-radius: 12px;
+    transition: all 0.3s ease;
 }
 
 .right-section .anonymous-section .switch-holder {
@@ -274,9 +274,9 @@ hr{
     border-radius: 20px;
     margin: 0;
     cursor: pointer;
-    box-shadow: inset -8px -8px 15px rgba(255,255,255,.6),
-                inset 10px 10px 10px rgba(0,0,0, .25);
-    
+    box-shadow: inset -8px -8px 15px rgba(255, 255, 255, 0.6),
+                inset 10px 10px 10px rgba(0, 0, 0, 0.25);
+    transition: all 0.3s ease;
 }
 
 .right-section .anonymous-section .switch-toggle input[type="checkbox"] + label::before {
@@ -291,9 +291,9 @@ hr{
     height: 25px;
     border-radius: 20px;
     background-color: #d1dad3;
-    box-shadow: -3px -3px 5px rgba(255,255,255,.5),
-                3px 3px 5px rgba(0,0,0, .25);
-    transition: .3s ease-in-out;
+    box-shadow: -3px -3px 5px rgba(255, 255, 255, 0.5),
+                3px 3px 5px rgba(0, 0, 0, 0.25);
+    transition: 0.3s ease-in-out;
 }
 
 .right-section .anonymous-section .switch-toggle input[type="checkbox"]:checked + label::before {
@@ -301,15 +301,14 @@ hr{
     content: 'ON';
     color: #fff;
     background-color: #00b33c;
-    box-shadow: -3px -3px 5px rgba(255,255,255,.5),
+    box-shadow: -3px -3px 5px rgba(255, 255, 255, 0.5),
                 3px 3px 5px #00b33c;
 }
 
-
-.right-section .ai-sections .btn{
+.right-section .ai-sections .btn {
     display: inline-block;
     margin-top: 10px;
-    padding: 5px;
+    padding: 8px 16px;
     font-size: 16px;
     font-weight: bold;
     background-color: #007bff;
@@ -321,23 +320,233 @@ hr{
     transition: background-color 0.3s ease-in-out;
 }
 
-.right-section .ai-sections .btn:hover{
+.right-section .ai-sections .btn:hover {
     background-color: #0056be;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
-#uid, #username{
+#uid, #username {
     display: none;
 }
 
-.chatSection{
+.chatSection {
     width: 100%;
 }
 
-a{
+a {
     text-decoration: none;
 }
 
-.note{
-    color: red;
+.note {
+    color: #ff3333;
     font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+#progress-text{
+    color: #333;
+}
+
+.dark-mode #progress-text{
+    color: #ffffff;
+}
+
+/* Dark mode styles */
+.dark-mode {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+.dark-mode .left-section,
+.dark-mode .center-section,
+.dark-mode .right-section {
+    background-color: #1e1e1e;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode hr {
+    border-color: #555;
+}
+
+.dark-mode .sub-sections h2 {
+    color: #4da6ff;
+}
+
+.dark-mode .sub-sections p {
+    color: #b0b0b0;
+}
+
+.dark-mode .follow-btn {
+    background: #1c7430;
+}
+
+.dark-mode .follow-btn:hover {
+    background: #155724;
+}
+
+.dark-mode .load a {
+    color: #e0e0e0;
+}
+
+.dark-mode .load a:hover {
+    color: #4da6ff;
+}
+
+.dark-mode .center-section .sub-sections .heading {
+    color: #e0e0e0;
+}
+
+.dark-mode .chat-item {
+    background: #2a2a2a;
+    border: 1px solid #444;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .chat-item:hover {
+    background: #333333;
+}
+
+.dark-mode .chat-item .user-icon {
+    background-color: #333;
+    color: #b0b0b0;
+}
+
+.dark-mode .chat-header .chat-name {
+    color: #e0e0e0;
+}
+
+.dark-mode .message-count {
+    background: #cc5200;
+}
+
+.dark-mode .message-preview {
+    color: #b0b0b0;
+}
+
+.dark-mode .right-section .profile-section {
+    background: #2a2a2a;
+}
+
+.dark-mode .right-section .profile-section .profile-header .details .complete-profile-btn {
+    color: #4da6ff;
+}
+
+.dark-mode .right-section .anonymous-section,
+.dark-mode .right-section .ai-sections {
+    background: #2a2a2a;
+}
+
+.dark-mode .right-section .anonymous-section .switch-toggle input[type="checkbox"] + label {
+    box-shadow: inset -8px -8px 15px rgba(40, 40, 40, 0.6),
+                inset 10px 10px 10px rgba(0, 0, 0, 0.5);
+}
+
+.dark-mode .right-section .anonymous-section .switch-toggle input[type="checkbox"] + label::before {
+    background-color: #444;
+    color: #b0b0b0;
+    box-shadow: -3px -3px 5px rgba(40, 40, 40, 0.5),
+                3px 3px 5px rgba(0, 0, 0, 0.5);
+}
+
+.dark-mode .right-section .anonymous-section .switch-toggle input[type="checkbox"]:checked + label::before {
+    background-color: #00b33c;
+}
+
+.dark-mode .right-section .ai-sections .btn {
+    background-color: #0062cc;
+}
+
+.dark-mode .right-section .ai-sections .btn:hover {
+    background-color: #0056b3;
+}
+
+.dark-mode .note {
+    color: #ff6666;
+}
+
+/* Visual improvements for both modes */
+.chat-item {
+    transform: translateY(0);
+    transition: all 0.3s ease;
+}
+
+.chat-item:hover {
+    transform: translateY(-2px);
+}
+
+.follow-btn, .right-section .ai-sections .btn {
+    transform: translateY(0);
+    transition: all 0.3s ease;
+}
+
+.follow-btn:hover, .right-section .ai-sections .btn:hover {
+    transform: translateY(-2px);
+}
+
+.right-section .profile-section:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Dark/Light Mode Toggle Button Styling */
+.mode-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    background: linear-gradient(145deg, #e6e6e6, #ffffff);
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.1),
+                -5px -5px 10px rgba(255, 255, 255, 0.6);
+    transition: all 0.3s ease;
+}
+
+.mode-toggle:hover {
+    transform: scale(1.1);
+}
+
+.dark-mode .mode-toggle {
+    background: linear-gradient(145deg, #1e1e1e, #2a2a2a);
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3),
+                -5px -5px 10px rgba(40, 40, 40, 0.3);
+}
+
+.mode-toggle i {
+    font-size: 24px;
+    color: #333;
+    transition: all 0.3s ease;
+}
+
+.dark-mode .mode-toggle i {
+    color: #e0e0e0;
+}
+
+/* Pulse animation for notification counts */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.message-count {
+    animation: pulse 2s infinite;
+}
+
+/* Smooth transitions for all elements */
+* {
+    transition: all 0.3s ease;
 }

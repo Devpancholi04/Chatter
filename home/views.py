@@ -11,6 +11,7 @@ from rest_framework.response import Response
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.decorators import login_required
 
+from datetime import datetime
 
 from django.contrib import messages
 from django.contrib.auth import logout
@@ -484,3 +485,67 @@ def user_profile(request, username):
     print(params)
 
     return render(request, "home/profile_page_for_user.html", params)
+
+
+
+def friend_request_page(request):
+
+    user = request.user
+
+    friend = Friend.objects.filter(receiver = user, status = 'pending')
+    
+    params = {
+        'friend_list' : friend
+    }
+
+    return render(request, "home/friend_request.html", params)
+
+@api_view(['GET'])
+def accept_request(request, username):
+
+    sender_user = CustomUser.objects.get(username = username)
+    user = request.user
+
+    if not sender_user:
+        return Response({
+            "message" : "User Not Found!"
+        }, status=400)
+    
+    get_request = Friend.objects.get(Q(sender = sender_user) | Q(receiver = user), is_accepted = False)
+
+    if get_request:
+        get_request.is_accepted = True
+        get_request.status = "accepted"
+        get_request.save()
+
+    else:
+       return Response({
+            "message" : "Request Not Found!"
+        }, status=400) 
+
+    return Response({'message' : 'Friend Request Accepted..'})
+
+
+@api_view(['GET'])
+def decline_request(request, username):
+    sender_user = CustomUser.objects.get(username = username)
+    user = request.user
+
+    if not sender_user:
+        return Response({
+            "message" : "User Not Found!"
+        }, status=400)
+    
+    get_request = Friend.objects.get(Q(sender = sender_user) | Q(receiver = user), is_accepted = False)
+
+    if get_request:
+        get_request.status = "rejected"
+        get_request.save()
+
+    else:
+       return Response({
+            "message" : "Request Not Found!"
+        }, status=400) 
+
+    return Response({'message' : 'Friend request Declined!'})
+    

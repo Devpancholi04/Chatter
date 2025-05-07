@@ -14,5 +14,9 @@ urlpatterns = [
     path('verify/otp/page/<str:uid>/type=<str:type>/', views.otp_verify, name="otp_verify_func"),
 
     path('api/search/user/',views.search_users, name="search_users"),
-    path('user/profile/<str:username>/', views.user_profile, name="user_profile")
+    path('user/profile/<str:username>/', views.user_profile, name="user_profile"),
+
+    path('friend/requests/', views.friend_request_page, name="friend_request_page"),
+    path('api/friends/request/accept/<str:username>/', views.accept_request, name="accpet_request"),
+    path('api/friends/request/decline/<str:username>/', views.decline_request, name="decline_request"),
 ]

@@ -1,0 +1,158 @@
+{% extends 'base/main_navbar.html' %}
+
+{% block title %}
+Chatter | Friend Requests
+{% endblock title %}
+
+{% block external_css %}
+<link rel="stylesheet" href="/media/css/home/friend_request.css">
+{% endblock external_css %}
+
+{% block body %}
+<div class="container">
+    <div class="app-header">
+        <h1 class="app-title">Chatter</h1>
+        <p class="app-subtitle">Connect with your friends</p>
+    </div>
+
+    <div class="friend-request-container">
+        <div class="friend-request-header">
+            <div class="header-left">
+                <i class="fas fa-users"></i>
+                <h2>Friend Requests</h2>
+            </div>
+            <span class="badge">New</span>
+        </div>
+
+        <div class="friend-request-list">
+            <!-- Friend Request 1 -->
+            {% for friend in friend_list %}
+            <div class="friend-request-item">
+                <div class="request-content">
+                    <div class="avatar">
+                        <img src="{% if friend.sender.profile_photos %} {{ friend.sender.profile_photos.url }}{% else %}/media/images/user_logo/user_img.jpg{% endif %}" alt="{{ friend.sender.first_name }}">
+                    </div>
+                    <div class="request-info">
+                        <h3>{{ friend.sender.first_name }} {{ friend.sender.last_name }}</h3>
+                        <div class="request-meta">
+                            <span class="mutual-friends">{{ friend.sender.username }}</span>
+                            <span class="time-ago" data-time = '{{ friend.created_at|date:"c" }}'>Loading...</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="request-actions">
+                    <button class="btn btn-accept"
+                        onclick="accept_request('{{ friend.sender.username }}')">Accept</button>
+                    <button class="btn btn-decline"
+                        onclick="decline_request('{{ friend.sender.username}}')">Decline</button>
+                </div>
+            </div>
+            {% endfor %}
+
+            <!-- Empty state (hidden by default) -->
+            <div class="empty-requests" style="display: none;">
+                <div class="empty-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3>No friend requests</h3>
+                <p>When someone sends you a friend request, it will appear here.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast notification -->
+    <div id="toast" class="toast">
+        <div class="toast-content">
+            <h4 id="toast-title"></h4>
+            <p id="toast-message"></p>
+        </div>
+    </div>
+</div>
+{% endblock body %}
+
+
+{% block internal_js %}
+<script>
+    function showToast(title, message, isDecline = false) {
+      const toast = document.getElementById('toast');
+      const toastTitle = document.getElementById('toast-title');
+      const toastMessage = document.getElementById('toast-message');
+      
+      toastTitle.textContent = title;
+      toastMessage.textContent = message;
+      
+      if (isDecline) {
+        toast.classList.add('toast-error');
+      } else {
+        toast.classList.remove('toast-error');
+      }
+      
+      toast.classList.add('show');
+      
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+      
+      // Remove the request item (for demo purposes)
+      const button = event.target;
+      const requestItem = button.closest('.friend-request-item');
+      
+      setTimeout(() => {
+        requestItem.style.opacity = '0';
+        setTimeout(() => {
+          requestItem.remove();
+          
+          // Check if there are no more request items
+          const remainingItems = document.querySelectorAll('.friend-request-item');
+          if (remainingItems.length === 0) {
+            document.querySelector('.empty-requests').style.display = 'flex';
+          }
+        }, 300);
+      }, 1000);
+    }
+
+
+    function accept_request(username){
+        $.ajax({
+            url: `/api/friends/request/accept/${username}/`,
+            type: "GET",
+            dataType: "json",
+            success: showToast("Friend Request Accepted", `You are now friend with ${username}`)
+        })
+    }
+
+    function decline_request(username){
+        $.ajax({
+            url: `/api/friends/request/decline/${username}/`,
+            type: "GET",
+            dataType: "json",
+            success: showToast("Friend Request declined", `You declined ${username} friend Request`, true)
+        })
+    }
+
+
+
+    function getRelativeTime(dateStr) {
+        const givenDate = new Date(dateStr);
+        const now = new Date();
+
+        const diffMs = now - givenDate;
+        const seconds = Math.floor(diffMs / 1000);
+        const minutes = Math.floor(seconds / 60);
+        const hours = Math.floor(minutes / 60);
+        const days = Math.floor(hours / 24);
+
+        if (seconds < 60) return "just now";
+        else if (minutes < 60) return `${minutes} minute${minutes !== 1 ? "s" : ""} ago`;
+        else if (hours < 24) return `${hours} hour${hours !== 1 ? "s" : ""} ago`;
+        else return `${days} day${days !== 1 ? "s" : ""} ago`;
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".time-ago").forEach(el => {
+            const time = el.getAttribute("data-time");
+            el.textContent = getRelativeTime(time);
+        });
+    });
+  </script>
+{% endblock internal_js %}

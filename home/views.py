@@ -465,28 +465,46 @@ def search_users(request):
 
 
 def user_profile(request, username):
+    active_user = request.user
 
-    active_user = request.user.username
-    print(active_user)
+    if active_user.username == username:
+        return redirect('profile_page')  
 
-    if active_user == username:
-        return redirect('profile_page')
+    try:
+        user = CustomUser.objects.get(username=username)
+    except CustomUser.DoesNotExist:
+        return redirect('profile_page')  
 
-    user = CustomUser.objects.get(username = username)
 
-    friend = Friend.objects.filter(Q(sender = user) | Q(receiver = user), status='accepted')
-    friend_count = friend.count()
+    friends = Friend.objects.filter(
+        (Q(sender=user) | Q(receiver=user)) & Q(status='accepted')
+    )
+    friend_count = friends.count()
 
+    is_request_sent = Friend.objects.filter(
+        Q(sender=active_user) & Q(receiver=user) & Q(status='pending')
+    ).exists()
+
+    is_friend = Friend.objects.filter(
+        (Q(sender=active_user) & Q(receiver=user) | Q(sender=user) & Q(receiver=active_user)),
+        status='accepted'
+    ).exists()
+
+    is_request_received = Friend.objects.filter(
+        Q(sender=user) & Q(receiver=active_user) & Q(status='pending')
+    ).exists()
+
+    # Prepare context for rendering
     params = {
-        'user' : user,
-        'friend_list' : friend,
-        'friend_count' : friend_count,
+        'user': user,
+        'friend_list': friends,
+        'friend_count': friend_count,
+        'is_request_sent': is_request_sent,
+        'is_request_received': is_request_received,
+        'is_friend': is_friend,
     }
-    print(params)
 
     return render(request, "home/profile_page_for_user.html", params)
-
-
 
 def friend_request_page(request):
 
@@ -549,3 +567,18 @@ def decline_request(request, username):
 
     return Response({'message' : 'Friend request Declined!'})
     
+
+def send_request(request, username):
+    user = request.user
+
+    receiver_user = CustomUser.objects.get(username = username)
+
+    if not receiver_user:
+        return HttpResponseRedirect(request.path_info)
+    
+    create_request = Friend.objects.create(
+        sender = user,
+        receiver = receiver_user
+    )
+
+    return redirect('user_profile', username)

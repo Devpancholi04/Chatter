@@ -34,10 +34,14 @@ Chatter | Title Page
             <p>Status: {% if user.is_active == True %} Verified {% else %} Not Verified {% endif %}</p>
             <p>Bio: {% if user.bio %} {{ user.bio }} {% else %} Hey there! I'm using Chatter {% endif %}</p>
             <p>{{friend_count}} Friends </p>
-            {% if friend_list %}
-                <a href="{% url 'chat_page' request.user.uid request.user.username %}" class="add-friend-btn"> Chat Now</a>
+            {% if is_friend %}
+                <a href="{% url 'chat_page' request.user.uid request.user.username %}" class="add-friend-btn">Chat Now</a>
+            {% elif is_request_sent %}
+                <span class="add-friend-btn disabled">Requested</span>
+            {% elif is_request_received %}
+                <a href="{% url 'friend_request_page' %}" class="add-friend-btn">Pending Request Check Here.</a>
             {% else %}
-                <a href="#" class="add-friend-btn"> + Add Friend</a>
+                <a href="{% url 'send_request' user.username %}" class="add-friend-btn">+ Add Friend</a>
             {% endif %}
 
         </div> 

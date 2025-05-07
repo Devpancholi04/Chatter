@@ -441,3 +441,10 @@ input:checked+.slider {
 input:checked+.slider:before {
     transform: translateX(24px);
 }
+
+.dark-mode label, 
+.dark-mode h3, 
+.dark-mode .setting-box p, 
+.dark-mode .settings-content p{
+    color: #333;
+}

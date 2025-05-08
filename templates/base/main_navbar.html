@@ -13,9 +13,11 @@
 </head>
 <body>
     <nav class="navbar">
-        <div class="logo">
-            <img src="/media/images/logo/main-rbg.png" alt="brand-logo">
-        </div>
+        <a href="{% url 'home_page' %}">
+            <div class="logo">
+                <img src="/media/images/logo/main-rbg.png" alt="brand-logo">
+            </div>
+        </a>
 
         <div class="search-wrapper" style="position: relative;">
             <div class="search-bar">
@@ -54,7 +56,7 @@
             </div>
             <div class="dropdown-menu" id="dropdown-menu">
                 <a href="{% url 'profile_page' %}" class="btn"><i class="fas fa-user"></i> Profile</a>
-                <a href="#" class="btn"><i class="fas fa-cog"></i> Settings</a>
+                <a href="{% url 'profile_page' %}#settings" class="btn"><i class="fas fa-cog"></i> Settings</a>
                 <a href="{% url 'logout_page' %}" class="btn logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
             </div>
         </div>

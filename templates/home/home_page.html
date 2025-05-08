@@ -40,7 +40,7 @@
         </div>
 
         <div class="load">
-            <a href="">Load More</a>
+            <a href="{% url 'community_page' request.user.uid request.user.username %}">Load More</a>
         </div>
     </div>
 
@@ -51,7 +51,7 @@
             
         </div>
         <div class="load">
-            <a href="">Load More</a>
+            <a href="{% url 'chat_page' request.user.uid request.user.username %}">Load More</a>
         </div>
 
         

@@ -43,6 +43,14 @@ def profile_section(request):
     friend = Friend.objects.filter(Q(sender = user) | Q(receiver = user), status='accepted')
     friend_count = friend.count()
 
+    friend_list = [
+        f.receiver if f.sender == user else f.sender
+        for f in friend
+    ]
+
+    for f in friend:
+        print(f.sender.username)
+
     group = Group.objects.filter(members = user)
     
     get_community = CommunityMember.objects.filter(member = user)
@@ -51,11 +59,13 @@ def profile_section(request):
 
     params = {
         'user' : user,
-        'friend_list' : friend,
+        'friend_list' : friend_list,
         'friend_count' : friend_count,
         'group' : group,
         'community' : get_community,
     }
+    print(params)
+
     return render(request, "home/profile.html", params)
 
 @login_required(login_url='/accounts/login/')
@@ -463,7 +473,7 @@ def search_users(request):
         return Response({"users": result})
     return Response({"message" : "No user Found"})
 
-
+@login_required(login_url='/accounts/login/')
 def user_profile(request, username):
     active_user = request.user
 
@@ -506,6 +516,7 @@ def user_profile(request, username):
 
     return render(request, "home/profile_page_for_user.html", params)
 
+@login_required(login_url='/accounts/login/')
 def friend_request_page(request):
 
     user = request.user
@@ -567,7 +578,7 @@ def decline_request(request, username):
 
     return Response({'message' : 'Friend request Declined!'})
     
-
+@login_required(login_url='/accounts/login/')
 def send_request(request, username):
     user = request.user
 
@@ -580,5 +591,15 @@ def send_request(request, username):
         sender = user,
         receiver = receiver_user
     )
+
+    return redirect('user_profile', username)
+
+@login_required(login_url='/accounts/login/')
+def cancel_request(request, username):
+    user = request.user
+    receiver_user = CustomUser.objects.get(username = username)
+
+    friend_request = Friend.objects.get(sender = user, receiver = receiver_user, status = 'pending')
+    friend_request.delete()
 
     return redirect('user_profile', username)

@@ -39,7 +39,7 @@ def chat_page_sidebar(request, uid, username):
 
     chat_recent_key = f"CHAT-RECENT-KEY: {uid} - {username}"
     recent_message = cache.get(chat_recent_key)
-
+ 
     
     def get_datetime(chat):
         dt_str = f"{chat['last_msg_date']} {chat['last_msg_time']}"

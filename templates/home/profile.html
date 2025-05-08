@@ -48,16 +48,16 @@ Chatter | Title Page
             {% for friend in friend_list %}
             <div class="friend-card">
                 <img src=" 
-                    {% if friend.sender.profile_images %}
-                        {{ friend.sender.profile_images.url }}
+                    {% if friend.profile_images %}
+                        {{ friend.profile_images.url }}
                     {% else %}
                         /media/images/user_logo/user_img.jpg
                     {% endif %}" alt="User Image" class="friend-image">
-                <div class="friend-username">{{ friend.sender.username }}</div>
+                <div class="friend-username">{{ friend.username }}</div>
                 <div class="friend-fullname">
-                    {{ friend.sender.first_name }} {{ friend.sender.last_name }}
+                    {{ friend.first_name }} {{ friend.last_name }}
                 </div>
-                <a href="#" class="openProfile">👤 View Profile</a>
+                <a href="{% url 'user_profile' friend.username %}" class="openProfile">👤 View Profile</a>
             </div>
             {% endfor %}
 
@@ -72,7 +72,7 @@ Chatter | Title Page
                 <div class="friend-fullname">
                     {{ grp.group_name }}
                 </div>
-                <a href="#" class="openProfile">👤 View Group </a>
+                <a href="{%  url 'chat_page' request.user.uid request.user.username %}" class="openProfile">👤 chat Now </a>
             </div>
             {% endfor %}
             
@@ -94,7 +94,7 @@ Chatter | Title Page
                 <div class="friend-fullname">
                     {{ com.community.community_name }}
                 </div>
-                <a href="#" class="openProfile">👤 View Details</a>
+                <a href="{% url 'community_page' request.user.uid request.user.username %}" class="openProfile">👤 Chat Now</a>
             </div>
             {% endfor %}
         </div>
@@ -310,6 +310,17 @@ function logoutfun(){
     window.location.href = "{% url 'logout_page' %}";
 }
 
+window.addEventListener('DOMContentLoaded', function () {
+    const hash = window.location.hash;
+    if (hash) {
+        const targetTabButton = document.querySelector(`.tab[data-tab="${hash.substring(1)}"]`);
+        if (targetTabButton) {
+            targetTabButton.click();
+        }
+    } else {
+        document.getElementById("personal").style.display = "block";
+    }
+});
 
 </script>
 {% endblock internal_js %}

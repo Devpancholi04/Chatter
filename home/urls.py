@@ -21,4 +21,5 @@ urlpatterns = [
     path('api/friends/request/decline/<str:username>/', views.decline_request, name="decline_request"),
     
     path('api/send/friends/request/<str:username>/', views.send_request, name="send_request"),
+    path('api/cancel/friends/request/send/<str:username>/', views.cancel_request, name="cancel_request")
 ]

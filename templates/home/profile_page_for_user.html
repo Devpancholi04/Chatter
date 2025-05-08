@@ -37,7 +37,10 @@ Chatter | Title Page
             {% if is_friend %}
                 <a href="{% url 'chat_page' request.user.uid request.user.username %}" class="add-friend-btn">Chat Now</a>
             {% elif is_request_sent %}
-                <span class="add-friend-btn disabled">Requested</span>
+                <div class="already-send">
+                    <span class="add-friend-btn disabled">Requested</span>
+                    <a href="{% url 'cancel_request' user.username %}" class="add-friend-btn">Cancel Request</a>
+                </div>
             {% elif is_request_received %}
                 <a href="{% url 'friend_request_page' %}" class="add-friend-btn">Pending Request Check Here.</a>
             {% else %}

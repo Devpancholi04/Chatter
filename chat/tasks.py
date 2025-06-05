@@ -14,7 +14,10 @@ user = get_user_model()
 
 @shared_task
 def flush_all_chats_buffer_to_db():
-    pass
+    flush_one_to_one_chats()
+    flush_group_chats()
+    flush_community_chats()
+    update_marks_as_read_in_db()
 
 
 def flush_one_to_one_chats():
@@ -71,7 +74,7 @@ def flush_one_to_one_chats():
 
 
 def flush_group_chats():
-    buffer_keys = cache.key("GROUP-CHAT-BUFFER:*")
+    buffer_keys = cache.keys("GROUP-CHAT-BUFFER:*")
 
     if not buffer_keys:
         return
@@ -158,7 +161,7 @@ def flush_community_chats():
 
 
 def update_marks_as_read_in_db():
-    cache_keys = cache.Key("COMMUNITY-CHAT-CACHE:*")
+    cache_keys = cache.keys("COMMUNITY-CHAT-CACHE:*")
     print("Upadting community chat as read......")
 
     if not cache_keys:

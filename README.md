@@ -235,4 +235,8 @@ This project has no specified license. All rights are reserved by the developers
 
 For questions, bug reports, or feature requests, please contact:
 
+<<<<<<< HEAD
 *   Dev Pancholi: [https://github.com/Devpancholi04](https://github.com/Devpancholi04)
+=======
+*   Dev Pancholi: [https://github.com/Devpancholi04](https://github.com/Devpancholi04)
+>>>>>>> cfbd6bd58625c1e7d27e54669472d8e341a7b09a

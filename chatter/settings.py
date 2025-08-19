@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,10 +25,10 @@ TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure--l-^w6bs*!)pakj5xf#^2uh_&71zmx6b=+=c5cx@3fr)ko0i#_'
+SECRET_KEY = os.getenv("secert")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("debug")
 
 ALLOWED_HOSTS = ['127.0.0.1','0.0.0.0','chatter.com']
 
@@ -90,9 +93,9 @@ ASGI_APPLICATION = 'chatter.asgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'chatter_app',
+        'NAME': os.getenv('db_name'),
         'USER' : 'root',
-        'PASSWORD' : 'DEV19163247',
+        'PASSWORD' : os.getenv('db_password'),
         "HOST" : 'localhost',
         "PORT" : '3306'
     }
@@ -155,8 +158,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER = "atm.simulatorby.dev@gmail.com"
-EMAIL_HOST_PASSWORD = "fdxx gtmn kxhb lyzm"
+EMAIL_HOST_USER = os.getenv("email")
+EMAIL_HOST_PASSWORD = os.getenv("email_password")
 
 #redis setup
 

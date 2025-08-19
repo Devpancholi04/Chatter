@@ -6,9 +6,13 @@ from .models import AIChat
 from channels.db import database_sync_to_async
 from base.generate import generate_ids
 from openai import OpenAI
-import random
 import asyncio
 import re
+
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 class AIConsumer(AsyncWebsocketConsumer):
@@ -34,8 +38,8 @@ class AIConsumer(AsyncWebsocketConsumer):
 
     
     
-    api1 = "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"
-    api2 = "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"
+    api1 = os.getenv('api1')
+    api2 = os.getenv('api2')
 
     api = [api1, api2]
     ai_model = {

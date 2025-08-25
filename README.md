@@ -1,11 +1,11 @@
-# Chatter: ChatBox - Your Ultimate Communication Hub
+# Chatter - Your Ultimate Communication Hub
 
 [![GitHub Repo](https://img.shields.io/badge/GitHub-Repo-blue?style=flat-square&logo=github)](https://github.com/Devpancholi04/Chatter)
 [![Default Branch](https://img.shields.io/badge/Branch-main-green?style=flat-square)](https://github.com/Devpancholi04/Chatter)
 
 ## Project Description
 
-Chatter, also known as ChatBox, is a versatile chatting application built with Django, Channels, Celery, and Redis. It offers real-time messaging, group chats, community forums, and an AI-powered chat assistant, aiming to be a comprehensive communication solution.
+Chatter is a versatile chatting application built with Django, Channels, Celery, and Redis. It offers real-time messaging, group chats, community forums, and an AI-powered chat assistant, aiming to be a comprehensive communication solution.
 
 ## Features and Functionality
 
